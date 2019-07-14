@@ -3,6 +3,7 @@ package br.com.targettrust.traccadastros.servicos;
 import br.com.targettrust.traccadastros.converter.ReservaConverter;
 import br.com.targettrust.traccadastros.dto.ReservaDto;
 import br.com.targettrust.traccadastros.entidades.Carro;
+import br.com.targettrust.traccadastros.entidades.Reserva;
 import br.com.targettrust.traccadastros.exceptions.NegocioException;
 import br.com.targettrust.traccadastros.repositorio.ReservaRepository;
 import br.com.targettrust.traccadastros.stub.ReservaStub;
@@ -12,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 
@@ -56,5 +59,11 @@ public class ReservaServiceTest {
         when(modeloService.modeloDisponivel(2L, reserva.getDataInicial(), reserva.getDataFinal())).thenReturn(false);
         when(veiculoService.definirVeiculoPorModelo(2L)).thenReturn(new Carro());
         reservaService.reservarVeiculo(reserva);
+    }
+
+    @Test
+    public void cancelarReservaVeiculo(){
+        when(reservaRepository.findById(1L)).thenReturn(Optional.of(new Reserva()));
+        reservaService.cancelar(1L)
     }
 }
