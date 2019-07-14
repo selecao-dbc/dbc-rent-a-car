@@ -12,4 +12,6 @@ import org.springframework.data.repository.query.Param;
 import br.com.targettrust.traccadastros.entidades.Veiculo;
 
 public interface VeiculoRepository extends JpaRepository<Veiculo, Long>{
+
+    List<Veiculo> findByModeloId(Long id);
 }
