@@ -24,14 +24,14 @@ public class ReservaService {
     @Autowired
     private ReservaRepository reservaRepository;
 
-    public Long reservarVeiculo(ReservaDto reserva) {
+    public Long reservarVeiculo(ReservaDto reservaDto) {
         if (!modeloService.modeloDisponivel(reserva.getIdModelo(), reserva.getDataInicial(), reserva.getDataFinal())){
             throw new NegocioException("Modelo indisponivel para este periodo");
         }
-        Veiculo veiculo = definirVeiculo(veiculoRepository.findByModeloId(reserva.getIdModelo()));/
+        Veiculo veiculo = definirVeiculo(veiculoRepository.findByModeloId(reserva.getIdModelo()));
         Reserva newReserva = new Reserva();
-        newReserva.setDataInicial(reserva.getDataInicial());
-        newReserva.setDataFinal(reserva.getDataInicial());
+        newReserva.setDataInicial(reservaDto.getDataInicial());
+        newReserva.setDataFinal(reservaDto.getDataInicial());
         newReserva.setVeiculo(veiculo);
         reservaRepository.save(newReserva);
         return newReserva.getId();

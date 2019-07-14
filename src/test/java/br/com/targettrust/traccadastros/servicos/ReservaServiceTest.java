@@ -29,19 +29,22 @@ public class ReservaServiceTest {
     @Mock
     private ReservaRepository reservaRepository;
 
+    @Mock
+    private ModeloService modeloService;
+
     @Test
     public void reservarVeiculo() {
-        ReservaDto reserva = new ReservaDto();
-        reserva.setIdModelo(1L);
-        reserva.setDataInicial(LocalDate.now());
-        reserva.setDataFinal(LocalDate.now());
+        ReservaDto reserva = ReservaStub.gerarReservaDto(1L);
+        when(modeloService.modeloDisponivel(1L, reserva.getDataInicial(), reserva.getDataFinal())).thenReturn(true);
         when(veiculoRepository.findByModeloId(1L)).thenReturn(VeiculoStub.gerarColecao());
         reservaService.reservarVeiculo(reserva);
     }
 
     @Test(expected = NegocioException.class)
     public void tentarReservarVeiculoIndisponivel() {
+        ReservaDto reserva = ReservaStub.gerarReservaDto(2L);
+        when(modeloService.modeloDisponivel(2L, reserva.getDataInicial(), reserva.getDataFinal())).thenReturn(false);
         when(veiculoRepository.findByModeloId(2L)).thenReturn(VeiculoStub.gerarColecao());
-        reservaService.reservarVeiculo(ReservaStub.gerarReservaDto(2L));
+        reservaService.reservarVeiculo(reserva);
     }
 }
