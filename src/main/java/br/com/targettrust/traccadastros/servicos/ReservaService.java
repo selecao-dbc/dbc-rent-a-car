@@ -41,12 +41,30 @@ public class ReservaService {
         return reserva.getId();
     }
 
+    public void editarReservaVeiculo(Long idReserva, ReservaDto reservaDto) {
+        Optional<Reserva> reserva = reservaRepository.findById(idReserva);
+        if (!reserva.isPresent()) {
+            throw new NegocioException("Reserva inexistente");
+        }
+        Veiculo veiculo = veiculoService.definirVeiculoPorModelo(reservaDto.getIdModelo());
+        if (veiculo == null) {
+            throw new NegocioException("Nenhum veiculo encontrado para este modelo");
+        }
+        if (!modeloService.modeloDisponivel(reservaDto.getIdModelo(), reservaDto.getDataInicial(), reservaDto.getDataFinal())) {
+            throw new NegocioException("Modelo indisponivel para este periodo");
+        }
+
+        reserva.get().setDataInicial(reservaDto.getDataInicial());
+        reserva.get().setDataFinal(reservaDto.getDataFinal());
+        reservaRepository.save(reserva.get());
+    }
+
     public void cancelar(Long id) {
         Optional<Reserva> reserva = reservaRepository.findById(id);
         if (!reserva.isPresent()) {
             throw new NegocioException("Reserva inexistente");
         }
-        if (reserva.get().getDataCancelamento() == null){
+        if (reserva.get().getDataCancelamento() == null) {
             throw new NegocioException("Reserva já cancelada");
         }
         reserva.get().setDataCancelamento(LocalDate.now());

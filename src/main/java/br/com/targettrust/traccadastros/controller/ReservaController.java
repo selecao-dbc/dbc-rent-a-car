@@ -35,4 +35,13 @@ public class ReservaController {
         reservaService.cancelar(id);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity cancelar(@PathVariable Long id, @Valid @RequestBody ReservaDto reserva) {
+        if (id == null || reserva == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        reservaService.editarReservaVeiculo(id, reserva);
+        return ResponseEntity.ok().build();
+    }
 }

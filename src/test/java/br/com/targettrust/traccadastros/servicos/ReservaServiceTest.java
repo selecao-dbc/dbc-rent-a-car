@@ -86,7 +86,7 @@ public class ReservaServiceTest {
     @Test
     public void editarReservaVeiculo() {
         ReservaDto reserva = ReservaStub.gerarReservaDto(1L);
-        when(reservaRepository.findById(1L)).thenReturn(Optional.of(reserva));
+        when(reservaRepository.findById(1L)).thenReturn(Optional.of(new Reserva()));
         when(modeloService.modeloDisponivel(1L, reserva.getDataInicial(), reserva.getDataFinal())).thenReturn(true);
         when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(new Carro());
         reservaService.editarReservaVeiculo(1L, reserva);
