@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
@@ -62,7 +63,22 @@ public class ReservaServiceTest {
     }
 
     @Test
-    public void cancelarReservaVeiculo(){
+    public void cancelarReservaVeiculo() {
+        Reserva reserva = new Reserva();
+        reserva.setId(2L);
+        reserva.setDataCancelamento(LocalDate.now());
+        when(reservaRepository.findById(1L)).thenReturn(Optional.of(reserva));
+        reservaService.cancelar(1L);
+    }
+
+    @Test(expected = NegocioException.class)
+    public void cancelarReservaVeiculoInexistente() {
+        when(reservaRepository.findById(1L)).thenReturn(Optional.empty());
+        reservaService.cancelar(1L);
+    }
+
+    @Test(expected = NegocioException.class)
+    public void cancelarReservaVeiculoJaCancelado() {
         when(reservaRepository.findById(1L)).thenReturn(Optional.of(new Reserva()));
         reservaService.cancelar(1L);
     }
