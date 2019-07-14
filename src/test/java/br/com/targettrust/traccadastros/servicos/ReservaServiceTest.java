@@ -102,7 +102,7 @@ public class ReservaServiceTest {
         ReservaDto reservaDto = ReservaStub.gerarReservaDto(1L);
         when(modeloService.modeloDisponivel(1L, reservaDto.getDataInicial(), reservaDto.getDataFinal())).thenReturn(true);
         when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(null);
-        reservaService.reservarVeiculo(reservaDto);
+        reservaService.editarReservaVeiculo(2L, reservaDto);
     }
 
     @Test(expected = NegocioException.class)
@@ -113,7 +113,7 @@ public class ReservaServiceTest {
         ReservaDto reservaDto = ReservaStub.gerarReservaDto(2L);
         when(modeloService.modeloDisponivel(2L, reservaDto.getDataInicial(), reservaDto.getDataFinal())).thenReturn(false);
         when(veiculoService.definirVeiculoPorModelo(2L)).thenReturn(new Carro());
-        reservaService.reservarVeiculo(reservaDto);
+        reservaService.editarReservaVeiculo(2L, reservaDto);
     }
 
 }
