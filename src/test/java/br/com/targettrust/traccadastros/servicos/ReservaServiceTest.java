@@ -1,6 +1,7 @@
 package br.com.targettrust.traccadastros.servicos;
 
 import br.com.targettrust.traccadastros.dto.ReservaDto;
+import br.com.targettrust.traccadastros.exceptions.NegocioException;
 import br.com.targettrust.traccadastros.repositorio.ReservaRepository;
 import br.com.targettrust.traccadastros.repositorio.VeiculoRepository;
 import br.com.targettrust.traccadastros.stub.ReservaStub;
@@ -38,9 +39,9 @@ public class ReservaServiceTest {
         reservaService.reservarVeiculo(reserva);
     }
 
-    @Test(expected = NogocioException.class)
+    @Test(expected = NegocioException.class)
     public void tentarReservarVeiculoIndisponivel() {
-        when(veiculoRepository.findByModeloId(1L)).thenReturn(VeiculoStub.gerarColecao());
+        when(veiculoRepository.findByModeloId(2L)).thenReturn(VeiculoStub.gerarColecao());
         reservaService.reservarVeiculo(ReservaStub.gerarReservaDto(2L));
     }
 }

@@ -16,12 +16,12 @@ public interface ReservaRepository
 	extends JpaRepository<Reserva, Long>{
 
 	@Query("  from Reserva reserva "+ 
-	       " where reserva.veiculo.placa = :placa "
+	       " where reserva.veiculo.modelo.id = :idModelo"
 	       + " and ( :dataInicial between reserva.dataInicial and reserva.dataFinal "
 	       + "       OR"
 	       + "       :dataFinal between reserva.dataInicial and reserva.dataFinal )")
-	List<Reserva> findByPlacaVeiculo(
-			@Param("placa") String placa, 
+	List<Reserva> findByModeloVeiculo(
+			@Param("idModelo") Long idModelo,
 			@Param("dataInicial") LocalDate dataInicial, 
 			@Param("dataFinal") LocalDate dataFinal);
 
