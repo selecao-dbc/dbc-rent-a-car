@@ -9,6 +9,8 @@ import br.com.targettrust.traccadastros.repositorio.LocacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class LocacaoService {
 
@@ -36,5 +38,25 @@ public class LocacaoService {
         locacao.setVeiculo(veiculo);
         locacaoRepository.save(locacao);
         return locacao.getId();
+    }
+
+    public void editarLocacaoVeiculo(Long idLocacao, LocacaoDto locacaoDto) {
+        Optional<Locacao> locacao = locacaoRepository.findById(idLocacao);
+        if (!locacao.isPresent()) {
+            throw new NegocioException("Locação inexistente");
+        }
+        Veiculo veiculo = veiculoService.definirVeiculoPorModelo(locacaoDto.getIdModelo());
+        if (veiculo == null) {
+            throw new NegocioException("Nenhum veiculo encontrado para este modelo");
+        }
+        if (!modeloService.modeloDisponivel(locacaoDto.getIdModelo(), locacaoDto.getDataInicial(), locacaoDto.getDataFinal())) {
+            throw new NegocioException("Modelo indisponivel para este periodo");
+        }
+
+        locacao.get().setDataInicial(locacaoDto.getDataInicial());
+        locacao.get().setDataFinal(locacaoDto.getDataFinal());
+        locacao.get().setValor(locacaoDto.getValorPago());
+        locacao.get().setVeiculo(veiculo);
+        locacaoRepository.save(locacao.get());
     }
 }

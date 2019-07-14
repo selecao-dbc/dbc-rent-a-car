@@ -68,9 +68,9 @@ public class LocacaoServiceTest {
         Locacao locacao = new Locacao();
         locacao.setId(1L);
         when(locacaoRepository.findById(1L)).thenReturn(Optional.of(locacao));
-        ReservaDto reservaDto = ReservaStub.gerarReservaDto(1L);
-        when(modeloService.modeloDisponivel(1L, reservaDto.getDataInicial(), reservaDto.getDataFinal())).thenReturn(true);
+        LocacaoDto locacaoDto = LocacaoStub.gerarLocacaoDto(1L);
+        when(modeloService.modeloDisponivel(1L, locacaoDto.getDataInicial(), locacaoDto.getDataFinal())).thenReturn(true);
         when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(new Carro());
-        locacaoService.editarLocacaoVeiculo(1L, reservaDto);
+        locacaoService.editarLocacaoVeiculo(1L, locacaoDto);
     }
 }
