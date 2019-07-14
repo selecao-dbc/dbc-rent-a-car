@@ -8,9 +8,9 @@ import br.com.targettrust.traccadastros.exceptions.NegocioException;
 import br.com.targettrust.traccadastros.repositorio.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class ReservaService {
@@ -39,5 +39,17 @@ public class ReservaService {
         reserva.setVeiculo(veiculo);
         reservaRepository.save(reserva);
         return reserva.getId();
+    }
+
+    public void cancelar(Long id) {
+        Optional<Reserva> reserva = reservaRepository.findById(id);
+        if (!reserva.isPresent()) {
+            throw new NegocioException("Reserva inexistente");
+        }
+        if (reserva.get().getDataCancelamento() == null){
+            throw new NegocioException("Reserva já cancelada");
+        }
+        reserva.get().setDataCancelamento(LocalDate.now());
+        reservaRepository.save(reserva.get());
     }
 }

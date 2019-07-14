@@ -64,6 +64,6 @@ public class ReservaServiceTest {
     @Test
     public void cancelarReservaVeiculo(){
         when(reservaRepository.findById(1L)).thenReturn(Optional.of(new Reserva()));
-        reservaService.cancelar(1L)
+        reservaService.cancelar(1L);
     }
 }
