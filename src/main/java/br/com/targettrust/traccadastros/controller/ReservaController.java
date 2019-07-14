@@ -14,8 +14,6 @@ import javax.validation.Valid;
 @RequestMapping("reservas")
 public class ReservaController {
 
-    // TODO 1 Implementar métodos para criação, alteração e cancelamento de reserva
-
     @Autowired
     private ReservaService reservaService;
 
@@ -37,7 +35,7 @@ public class ReservaController {
     }
 
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity cancelar(@PathVariable Long id, @Valid @RequestBody ReservaDto reserva) {
+    public ResponseEntity editar(@PathVariable Long id, @Valid @RequestBody ReservaDto reserva) {
         if (id == null || reserva == null) {
             return ResponseEntity.badRequest().build();
         }

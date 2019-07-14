@@ -63,7 +63,7 @@ public class ReservaServiceTest {
     }
 
     @Test
-    public void cancelarReservaVeiculo() {
+    public void cancelarReserva() {
         Reserva reserva = new Reserva();
         reserva.setId(2L);
         reserva.setDataCancelamento(LocalDate.now());
@@ -72,19 +72,19 @@ public class ReservaServiceTest {
     }
 
     @Test(expected = NegocioException.class)
-    public void cancelarReservaVeiculoInexistente() {
+    public void cancelarReservaInexistente() {
         when(reservaRepository.findById(1L)).thenReturn(Optional.empty());
         reservaService.cancelar(1L);
     }
 
     @Test(expected = NegocioException.class)
-    public void cancelarReservaVeiculoJaCancelado() {
+    public void cancelarReservaJaCancelado() {
         when(reservaRepository.findById(1L)).thenReturn(Optional.of(new Reserva()));
         reservaService.cancelar(1L);
     }
 
     @Test
-    public void editarReservaVeiculo() {
+    public void editarReserva() {
         Reserva reserva = new Reserva();
         reserva.setId(1L);
         when(reservaRepository.findById(1L)).thenReturn(Optional.of(reserva));
@@ -95,7 +95,7 @@ public class ReservaServiceTest {
     }
 
     @Test(expected = NegocioException.class)
-    public void editarReservaVeiculoModeloInvalido() {
+    public void editarReservaModeloInvalido() {
         Reserva reserva = new Reserva();
         reserva.setId(1L);
         when(reservaRepository.findById(1L)).thenReturn(Optional.of(reserva));
