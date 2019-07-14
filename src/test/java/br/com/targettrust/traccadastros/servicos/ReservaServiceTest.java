@@ -3,6 +3,7 @@ package br.com.targettrust.traccadastros.servicos;
 import br.com.targettrust.traccadastros.dto.ReservaDto;
 import br.com.targettrust.traccadastros.repositorio.ReservaRepository;
 import br.com.targettrust.traccadastros.repositorio.VeiculoRepository;
+import br.com.targettrust.traccadastros.stub.ReservaStub;
 import br.com.targettrust.traccadastros.stub.VeiculoStub;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,5 +36,11 @@ public class ReservaServiceTest {
         reserva.setDataFinal(LocalDate.now());
         when(veiculoRepository.findByModeloId(1L)).thenReturn(VeiculoStub.gerarColecao());
         reservaService.reservarVeiculo(reserva);
+    }
+
+    @Test(expected = NogocioException.class)
+    public void tentarReservarVeiculoIndisponivel() {
+        when(veiculoRepository.findByModeloId(1L)).thenReturn(VeiculoStub.gerarColecao());
+        reservaService.reservarVeiculo(ReservaStub.gerarReservaDto(2L));
     }
 }
