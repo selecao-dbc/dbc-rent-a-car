@@ -1,5 +1,6 @@
 package br.com.targettrust.traccadastros.servicos;
 
+import br.com.targettrust.traccadastros.dto.ReservaDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
