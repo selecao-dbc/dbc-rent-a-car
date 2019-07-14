@@ -2,16 +2,22 @@ package br.com.targettrust.traccadastros.servicos;
 
 import br.com.targettrust.traccadastros.converter.LocacaoConverter;
 import br.com.targettrust.traccadastros.dto.LocacaoDto;
+import br.com.targettrust.traccadastros.dto.ReservaDto;
 import br.com.targettrust.traccadastros.entidades.Carro;
+import br.com.targettrust.traccadastros.entidades.Locacao;
+import br.com.targettrust.traccadastros.entidades.Reserva;
 import br.com.targettrust.traccadastros.exceptions.NegocioException;
 import br.com.targettrust.traccadastros.repositorio.LocacaoRepository;
 import br.com.targettrust.traccadastros.stub.LocacaoStub;
+import br.com.targettrust.traccadastros.stub.ReservaStub;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 
@@ -55,5 +61,16 @@ public class LocacaoServiceTest {
         when(modeloService.modeloDisponivel(2L, locacao.getDataInicial(), locacao.getDataFinal())).thenReturn(false);
         when(veiculoService.definirVeiculoPorModelo(2L)).thenReturn(new Carro());
         locacaoService.locarVeiculo(locacao);
+    }
+
+    @Test
+    public void editarLocacao() {
+        Locacao locacao = new Locacao();
+        locacao.setId(1L);
+        when(locacaoRepository.findById(1L)).thenReturn(Optional.of(locacao));
+        ReservaDto reservaDto = ReservaStub.gerarReservaDto(1L);
+        when(modeloService.modeloDisponivel(1L, reservaDto.getDataInicial(), reservaDto.getDataFinal())).thenReturn(true);
+        when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(new Carro());
+        locacaoService.editarLocacaoVeiculo(1L, reservaDto);
     }
 }
