@@ -56,6 +56,7 @@ public class ReservaService {
 
         reserva.get().setDataInicial(reservaDto.getDataInicial());
         reserva.get().setDataFinal(reservaDto.getDataFinal());
+        reserva.get().setVeiculo(veiculo);
         reservaRepository.save(reserva.get());
     }
 
