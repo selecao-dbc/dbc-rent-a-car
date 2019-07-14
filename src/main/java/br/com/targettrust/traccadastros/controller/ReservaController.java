@@ -2,6 +2,9 @@ package br.com.targettrust.traccadastros.controller;
 
 import br.com.targettrust.traccadastros.dto.ReservaDto;
 import br.com.targettrust.traccadastros.servicos.ReservaService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,13 @@ public class ReservaController {
     private ReservaService reservaService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(
+            value = "Cria uma nova reserva.",
+            notes = "Cria um novo resgistro de reserva de veciulos."
+    )
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = Long.class)
+    })
     public ResponseEntity criar(@Valid @RequestBody ReservaDto reserva) {
         if (reserva == null) {
             return ResponseEntity.badRequest().build();
@@ -29,6 +39,10 @@ public class ReservaController {
     }
 
     @PostMapping(path = "/{id}/cancelar", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(
+            value = "Cancela uma reserva.",
+            notes = "Executa o cancelamento de uma reserva ainda não cancelada."
+    )
     public ResponseEntity cancelar(@PathVariable Long id) {
         if (id == null) {
             return ResponseEntity.badRequest().build();
@@ -38,6 +52,10 @@ public class ReservaController {
     }
 
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(
+            value = "Edita uma reserva.",
+            notes = "Edita um reserva previamente já cadastrada."
+    )
     public ResponseEntity editar(@PathVariable Long id, @Valid @RequestBody ReservaDto reserva) {
         if (id == null || reserva == null) {
             return ResponseEntity.badRequest().build();
