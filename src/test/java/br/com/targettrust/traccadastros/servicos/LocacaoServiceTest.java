@@ -1,20 +1,11 @@
 package br.com.targettrust.traccadastros.servicos;
 
-import br.com.targettrust.traccadastros.converter.ReservaConverter;
-import br.com.targettrust.traccadastros.dto.ReservaDto;
+import br.com.targettrust.traccadastros.dto.LocacaoDto;
 import br.com.targettrust.traccadastros.entidades.Carro;
-import br.com.targettrust.traccadastros.entidades.Locacao;
-import br.com.targettrust.traccadastros.entidades.Reserva;
-import br.com.targettrust.traccadastros.repositorio.ReservaRepository;
 import br.com.targettrust.traccadastros.stub.LocacaoStub;
-import br.com.targettrust.traccadastros.stub.ReservaStub;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
-
-import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 
