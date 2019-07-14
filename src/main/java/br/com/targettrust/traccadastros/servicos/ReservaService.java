@@ -1,5 +1,6 @@
 package br.com.targettrust.traccadastros.servicos;
 
+import br.com.targettrust.traccadastros.converter.ReservaConverter;
 import br.com.targettrust.traccadastros.dto.ReservaDto;
 import br.com.targettrust.traccadastros.entidades.Reserva;
 import br.com.targettrust.traccadastros.entidades.Veiculo;
@@ -24,17 +25,21 @@ public class ReservaService {
     @Autowired
     private ReservaRepository reservaRepository;
 
+    @Autowired
+    private ReservaConverter reservaConverter;
+
     public Long reservarVeiculo(ReservaDto reservaDto) {
-        if (!modeloService.modeloDisponivel(reserva.getIdModelo(), reserva.getDataInicial(), reserva.getDataFinal())){
+        Veiculo veiculo = definirVeiculo(veiculoRepository.findByModeloId(reservaDto.getIdModelo()));
+        if (veiculo == null) {
+            throw new NegocioException("Modelo não existe");
+        }
+        if (!modeloService.modeloDisponivel(reservaDto.getIdModelo(), reservaDto.getDataInicial(), reservaDto.getDataFinal())) {
             throw new NegocioException("Modelo indisponivel para este periodo");
         }
-        Veiculo veiculo = definirVeiculo(veiculoRepository.findByModeloId(reserva.getIdModelo()));
-        Reserva newReserva = new Reserva();
-        newReserva.setDataInicial(reservaDto.getDataInicial());
-        newReserva.setDataFinal(reservaDto.getDataInicial());
-        newReserva.setVeiculo(veiculo);
-        reservaRepository.save(newReserva);
-        return newReserva.getId();
+        Reserva reserva = reservaConverter.converter(reservaDto);
+        reserva.setVeiculo(veiculo);
+        reservaRepository.save(reserva);
+        return reserva.getId();
     }
 
     private Veiculo definirVeiculo(List<Veiculo> veiculos) {
