@@ -6,7 +6,6 @@ import br.com.targettrust.traccadastros.entidades.Reserva;
 import br.com.targettrust.traccadastros.entidades.Veiculo;
 import br.com.targettrust.traccadastros.exceptions.NegocioException;
 import br.com.targettrust.traccadastros.repositorio.ReservaRepository;
-import br.com.targettrust.traccadastros.repositorio.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -20,7 +19,7 @@ public class ReservaService {
     private ModeloService modeloService;
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VeiculoService veiculoService;
 
     @Autowired
     private ReservaRepository reservaRepository;
@@ -29,9 +28,9 @@ public class ReservaService {
     private ReservaConverter reservaConverter;
 
     public Long reservarVeiculo(ReservaDto reservaDto) {
-        Veiculo veiculo = definirVeiculo(veiculoRepository.findByModeloId(reservaDto.getIdModelo()));
+        Veiculo veiculo = veiculoService.definirVeiculoPorModelo(reservaDto.getIdModelo());
         if (veiculo == null) {
-            throw new NegocioException("Modelo não existe");
+            throw new NegocioException("Nenhum veiculo encontrado para este modelo");
         }
         if (!modeloService.modeloDisponivel(reservaDto.getIdModelo(), reservaDto.getDataInicial(), reservaDto.getDataFinal())) {
             throw new NegocioException("Modelo indisponivel para este periodo");
@@ -40,12 +39,5 @@ public class ReservaService {
         reserva.setVeiculo(veiculo);
         reservaRepository.save(reserva);
         return reserva.getId();
-    }
-
-    private Veiculo definirVeiculo(List<Veiculo> veiculos) {
-        if (CollectionUtils.isEmpty(veiculos)) {
-            return null;
-        }
-        return veiculos.get(0);
     }
 }

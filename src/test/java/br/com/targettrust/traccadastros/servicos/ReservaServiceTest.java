@@ -2,11 +2,10 @@ package br.com.targettrust.traccadastros.servicos;
 
 import br.com.targettrust.traccadastros.converter.ReservaConverter;
 import br.com.targettrust.traccadastros.dto.ReservaDto;
+import br.com.targettrust.traccadastros.entidades.Carro;
 import br.com.targettrust.traccadastros.exceptions.NegocioException;
 import br.com.targettrust.traccadastros.repositorio.ReservaRepository;
-import br.com.targettrust.traccadastros.repositorio.VeiculoRepository;
 import br.com.targettrust.traccadastros.stub.ReservaStub;
-import br.com.targettrust.traccadastros.stub.VeiculoStub;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -24,7 +23,7 @@ public class ReservaServiceTest {
 
 
     @Mock
-    private VeiculoRepository veiculoRepository;
+    private VeiculoService veiculoService;
 
     @Mock
     private ReservaRepository reservaRepository;
@@ -39,7 +38,7 @@ public class ReservaServiceTest {
     public void reservarVeiculo() {
         ReservaDto reserva = ReservaStub.gerarReservaDto(1L);
         when(modeloService.modeloDisponivel(1L, reserva.getDataInicial(), reserva.getDataFinal())).thenReturn(true);
-        when(veiculoRepository.findByModeloId(1L)).thenReturn(VeiculoStub.gerarColecao());
+        when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(new Carro());
         reservaService.reservarVeiculo(reserva);
     }
 
@@ -47,7 +46,7 @@ public class ReservaServiceTest {
     public void reservarVeiculoModeloInvalido() {
         ReservaDto reserva = ReservaStub.gerarReservaDto(1L);
         when(modeloService.modeloDisponivel(1L, reserva.getDataInicial(), reserva.getDataFinal())).thenReturn(true);
-        when(veiculoRepository.findByModeloId(2L)).thenReturn(VeiculoStub.gerarColecao());
+        when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(null);
         reservaService.reservarVeiculo(reserva);
     }
 
@@ -55,7 +54,7 @@ public class ReservaServiceTest {
     public void reservarVeiculoIndisponivel() {
         ReservaDto reserva = ReservaStub.gerarReservaDto(2L);
         when(modeloService.modeloDisponivel(2L, reserva.getDataInicial(), reserva.getDataFinal())).thenReturn(false);
-        when(veiculoRepository.findByModeloId(2L)).thenReturn(VeiculoStub.gerarColecao());
+        when(veiculoService.definirVeiculoPorModelo(2L)).thenReturn(new Carro());
         reservaService.reservarVeiculo(reserva);
     }
 }
