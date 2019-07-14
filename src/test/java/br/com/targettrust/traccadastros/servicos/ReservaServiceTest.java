@@ -85,10 +85,35 @@ public class ReservaServiceTest {
 
     @Test
     public void editarReservaVeiculo() {
-        ReservaDto reserva = ReservaStub.gerarReservaDto(1L);
-        when(reservaRepository.findById(1L)).thenReturn(Optional.of(new Reserva()));
-        when(modeloService.modeloDisponivel(1L, reserva.getDataInicial(), reserva.getDataFinal())).thenReturn(true);
+        Reserva reserva = new Reserva();
+        reserva.setId(1L);
+        when(reservaRepository.findById(1L)).thenReturn(Optional.of(reserva));
+        ReservaDto reservaDto = ReservaStub.gerarReservaDto(1L);
+        when(modeloService.modeloDisponivel(1L, reservaDto.getDataInicial(), reservaDto.getDataFinal())).thenReturn(true);
         when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(new Carro());
-        reservaService.editarReservaVeiculo(1L, reserva);
+        reservaService.editarReservaVeiculo(1L, reservaDto);
     }
+
+    @Test(expected = NegocioException.class)
+    public void editarReservaVeiculoModeloInvalido() {
+        Reserva reserva = new Reserva();
+        reserva.setId(1L);
+        when(reservaRepository.findById(1L)).thenReturn(Optional.of(reserva));
+        ReservaDto reservaDto = ReservaStub.gerarReservaDto(1L);
+        when(modeloService.modeloDisponivel(1L, reservaDto.getDataInicial(), reservaDto.getDataFinal())).thenReturn(true);
+        when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(null);
+        reservaService.reservarVeiculo(reservaDto);
+    }
+
+    @Test(expected = NegocioException.class)
+    public void editarReservarVeiculoIndisponivel() {
+        Reserva reserva = new Reserva();
+        reserva.setId(1L);
+        when(reservaRepository.findById(2L)).thenReturn(Optional.of(reserva));
+        ReservaDto reservaDto = ReservaStub.gerarReservaDto(2L);
+        when(modeloService.modeloDisponivel(2L, reservaDto.getDataInicial(), reservaDto.getDataFinal())).thenReturn(false);
+        when(veiculoService.definirVeiculoPorModelo(2L)).thenReturn(new Carro());
+        reservaService.reservarVeiculo(reservaDto);
+    }
+
 }
