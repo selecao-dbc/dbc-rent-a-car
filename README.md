@@ -1,3 +1,34 @@
+
+# Como executar...
+
+
+## docker-compose
+Executar os seguintes comandos no diretório da aplicação:
+- mvn package
+- docker-compose up --build
+
+http://localhost:8585/api/swagger-ui.html#/
+
+## maven run
+Neste caso, será necessário alterar a Connection String que está no arquivo application.properties, após, executar a seguinte linha de comando:
+- mvn spring-boot:run
+
+## Preparar database
+Para otimizar a criação de alguns dados, podemos executar o script inicial que está no diretório de resources da aplicação.
+
+Abrir o pgAdmin em: http://localhost:16543/browser/
+- Login: pgadmin4@pgadmin.org
+- Password: admin
+
+Dados de conexão:
+- Host: rent-a-car-postgres
+- Port: 5432
+- Maintenance DataBase: trac_cadastros
+- Username: postgres
+- Password: postgres
+
+#
+
 # Seleção de desenvolvedores java
 
 O projeto em questão possui uma implementação parcial de uma API para uma locadora de automóveis. O projeto foi desenvolvido usando spring boot, spring-data-jpa e banco postgresal.
