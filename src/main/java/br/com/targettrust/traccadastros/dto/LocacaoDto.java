@@ -1,38 +1,11 @@
 package br.com.targettrust.traccadastros.dto;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import javax.validation.constraints.Positive;
 
-public class LocacaoDto {
+public class LocacaoDto extends ReservaDto {
 
-    private Long idModelo;
-    private LocalDate dataInicial;
-    private LocalDate dataFinal;
+    @Positive
     private Double valorPago;
-
-    public Long getIdModelo() {
-        return idModelo;
-    }
-
-    public void setIdModelo(Long idModelo) {
-        this.idModelo = idModelo;
-    }
-
-    public LocalDate getDataInicial() {
-        return dataInicial;
-    }
-
-    public void setDataInicial(LocalDate dataInicial) {
-        this.dataInicial = dataInicial;
-    }
-
-    public LocalDate getDataFinal() {
-        return dataFinal;
-    }
-
-    public void setDataFinal(LocalDate dataFinal) {
-        this.dataFinal = dataFinal;
-    }
 
     public Double getValorPago() {
         return valorPago;

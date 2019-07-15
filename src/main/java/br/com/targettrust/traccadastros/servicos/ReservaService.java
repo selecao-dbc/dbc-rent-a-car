@@ -5,6 +5,7 @@ import br.com.targettrust.traccadastros.dto.ReservaDto;
 import br.com.targettrust.traccadastros.entidades.Reserva;
 import br.com.targettrust.traccadastros.entidades.Veiculo;
 import br.com.targettrust.traccadastros.exceptions.NegocioException;
+import br.com.targettrust.traccadastros.exceptions.ObjetoNotFoundException;
 import br.com.targettrust.traccadastros.repositorio.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,22 +20,25 @@ public class ReservaService {
     private ModeloService modeloService;
 
     @Autowired
-    private VeiculoService veiculoService;
-
-    @Autowired
     private ReservaRepository reservaRepository;
 
     @Autowired
     private ReservaConverter reservaConverter;
 
+    public Reserva findById(Long id) {
+        Optional<Reserva> reserva = reservaRepository.findById(id);
+        if (!reserva.isPresent()) {
+            throw new ObjetoNotFoundException("Reserva não encontrada.");
+        }
+        return reserva.get();
+    }
+
     public Long reservarVeiculo(ReservaDto reservaDto) {
-        Veiculo veiculo = veiculoService.definirVeiculoPorModelo(reservaDto.getIdModelo());
-        if (veiculo == null) {
-            throw new NegocioException("Nenhum veiculo encontrado para este modelo");
-        }
-        if (!modeloService.modeloDisponivel(reservaDto.getIdModelo(), reservaDto.getDataInicial(), reservaDto.getDataFinal())) {
-            throw new NegocioException("Modelo indisponivel para este periodo");
-        }
+        Veiculo veiculo =
+                modeloService.verificarVeiculoParaEmprestimo(
+                        reservaDto.getIdModelo(),
+                        reservaDto.getDataInicial(),
+                        reservaDto.getDataFinal());
         Reserva reserva = reservaConverter.converter(reservaDto);
         reserva.setVeiculo(veiculo);
         reservaRepository.save(reserva);
@@ -42,33 +46,24 @@ public class ReservaService {
     }
 
     public void editarReservaVeiculo(Long idReserva, ReservaDto reservaDto) {
-        Optional<Reserva> reserva = reservaRepository.findById(idReserva);
-        if (!reserva.isPresent()) {
-            throw new NegocioException("Reserva inexistente");
-        }
-        Veiculo veiculo = veiculoService.definirVeiculoPorModelo(reservaDto.getIdModelo());
-        if (veiculo == null) {
-            throw new NegocioException("Nenhum veiculo encontrado para este modelo");
-        }
-        if (!modeloService.modeloDisponivel(reservaDto.getIdModelo(), reservaDto.getDataInicial(), reservaDto.getDataFinal())) {
-            throw new NegocioException("Modelo indisponivel para este periodo");
-        }
-
-        reserva.get().setDataInicial(reservaDto.getDataInicial());
-        reserva.get().setDataFinal(reservaDto.getDataFinal());
-        reserva.get().setVeiculo(veiculo);
-        reservaRepository.save(reserva.get());
+        Reserva reserva = findById(idReserva);
+        Veiculo veiculo =
+                modeloService.verificarVeiculoParaEmprestimo(
+                        reservaDto.getIdModelo(),
+                        reservaDto.getDataInicial(),
+                        reservaDto.getDataFinal());
+        reserva.setDataInicial(reservaDto.getDataInicial());
+        reserva.setDataFinal(reservaDto.getDataFinal());
+        reserva.setVeiculo(veiculo);
+        reservaRepository.save(reserva);
     }
 
     public void cancelar(Long id) {
-        Optional<Reserva> reserva = reservaRepository.findById(id);
-        if (!reserva.isPresent()) {
-            throw new NegocioException("Reserva inexistente");
+        Reserva reserva = findById(id);
+        if (reserva.getDataCancelamento() != null) {
+            throw new NegocioException("Reserva já foi cancelada.");
         }
-        if (reserva.get().getDataCancelamento() == null) {
-            throw new NegocioException("Reserva já cancelada");
-        }
-        reserva.get().setDataCancelamento(LocalDate.now());
-        reservaRepository.save(reserva.get());
+        reserva.setDataCancelamento(LocalDate.now());
+        reservaRepository.save(reserva);
     }
 }
