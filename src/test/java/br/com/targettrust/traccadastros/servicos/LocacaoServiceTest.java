@@ -2,11 +2,11 @@ package br.com.targettrust.traccadastros.servicos;
 
 import br.com.targettrust.traccadastros.converter.LocacaoConverter;
 import br.com.targettrust.traccadastros.dto.LocacaoDto;
-import br.com.targettrust.traccadastros.entidades.Carro;
 import br.com.targettrust.traccadastros.entidades.Locacao;
-import br.com.targettrust.traccadastros.exceptions.NegocioException;
+import br.com.targettrust.traccadastros.exceptions.ObjetoNotFoundException;
 import br.com.targettrust.traccadastros.repositorio.LocacaoRepository;
 import br.com.targettrust.traccadastros.stub.LocacaoStub;
+import br.com.targettrust.traccadastros.stub.VeiculoStub;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -20,6 +20,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 public class LocacaoServiceTest {
+
+    private final Long ID_MODELO = 1L;
+
+    private final Long ID_LOCACAO = 1L;
 
     @InjectMocks
     private LocacaoService locacaoService;
@@ -38,59 +42,39 @@ public class LocacaoServiceTest {
 
     @Test
     public void locarVeiculo() {
-        LocacaoDto locacaoDto = LocacaoStub.gerarLocacaoDto(1L);
-        when(modeloService.modeloDisponivel(1L, locacaoDto.getDataInicial(), locacaoDto.getDataFinal())).thenReturn(true);
-        when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(new Carro());
+        LocacaoDto locacaoDto = LocacaoStub.gerarLocacaoDto(ID_MODELO);
+        when(modeloService.verificarVeiculoParaEmprestimo(
+                locacaoDto.getIdModelo(),
+                locacaoDto.getDataInicial(),
+                locacaoDto.getDataFinal())).thenReturn(VeiculoStub.gerarCarro());
         locacaoService.locarVeiculo(locacaoDto);
-    }
-
-    @Test(expected = NegocioException.class)
-    public void locarVeiculoModeloInvalido() {
-        LocacaoDto locacao = LocacaoStub.gerarLocacaoDto(1L);
-        when(modeloService.modeloDisponivel(1L, locacao.getDataInicial(), locacao.getDataFinal())).thenReturn(true);
-        when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(null);
-        locacaoService.locarVeiculo(locacao);
-    }
-
-    @Test(expected = NegocioException.class)
-    public void locarVeiculoIndisponivel() {
-        LocacaoDto locacao = LocacaoStub.gerarLocacaoDto(2L);
-        when(modeloService.modeloDisponivel(2L, locacao.getDataInicial(), locacao.getDataFinal())).thenReturn(false);
-        when(veiculoService.definirVeiculoPorModelo(2L)).thenReturn(new Carro());
-        locacaoService.locarVeiculo(locacao);
     }
 
     @Test
     public void editarLocacao() {
-        Locacao locacao = new Locacao();
-        locacao.setId(1L);
-        when(locacaoRepository.findById(1L)).thenReturn(Optional.of(locacao));
-        LocacaoDto locacaoDto = LocacaoStub.gerarLocacaoDto(1L);
-        when(modeloService.modeloDisponivel(1L, locacaoDto.getDataInicial(), locacaoDto.getDataFinal())).thenReturn(true);
-        when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(new Carro());
-        locacaoService.editarLocacaoVeiculo(1L, locacaoDto);
+        Locacao locacao = LocacaoStub.gerarLocacao(ID_LOCACAO);
+        LocacaoDto locacaoDto = LocacaoStub.gerarLocacaoDto(ID_MODELO);
+
+        when(locacaoRepository.findById(ID_LOCACAO)).thenReturn(Optional.of(locacao));
+        when(modeloService.verificarVeiculoParaEmprestimo(
+                locacaoDto.getIdModelo(),
+                locacaoDto.getDataInicial(),
+                locacaoDto.getDataFinal())).thenReturn(VeiculoStub.gerarCarro());
+
+        locacaoService.editarLocacaoVeiculo(ID_LOCACAO, locacaoDto);
     }
 
-    @Test(expected = NegocioException.class)
-    public void editarLocacaoModeloInvalido() {
-        Locacao locacao = new Locacao();
-        locacao.setId(1L);
-        when(locacaoRepository.findById(1L)).thenReturn(Optional.of(locacao));
-        LocacaoDto locacaoDto = LocacaoStub.gerarLocacaoDto(1L);
-        when(modeloService.modeloDisponivel(1L, locacaoDto.getDataInicial(), locacaoDto.getDataFinal())).thenReturn(true);
-        when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(null);
-        locacaoService.editarLocacaoVeiculo(2L, locacaoDto);
-    }
+    @Test(expected = ObjetoNotFoundException.class)
+    public void editarLocacaoInexistente() {
+        Locacao locacao = LocacaoStub.gerarLocacao(ID_LOCACAO);
+        LocacaoDto locacaoDto = LocacaoStub.gerarLocacaoDto(ID_MODELO);
 
-    @Test(expected = NegocioException.class)
-    public void editarLocacaorVeiculoIndisponivel() {
-        Locacao locacao = new Locacao();
-        locacao.setId(1L);
-        when(locacaoRepository.findById(2L)).thenReturn(Optional.of(locacao));
-        LocacaoDto locacaoDto = LocacaoStub.gerarLocacaoDto(2L);
-        when(modeloService.modeloDisponivel(2L, locacaoDto.getDataInicial(), locacaoDto.getDataFinal())).thenReturn(false);
-        when(veiculoService.definirVeiculoPorModelo(2L)).thenReturn(new Carro());
-        when(veiculoService.definirVeiculoPorModelo(2L)).thenReturn(new Carro());
+        when(locacaoRepository.findById(ID_LOCACAO)).thenReturn(Optional.of(locacao));
+        when(modeloService.verificarVeiculoParaEmprestimo(
+                locacaoDto.getIdModelo(),
+                locacaoDto.getDataInicial(),
+                locacaoDto.getDataFinal())).thenReturn(VeiculoStub.gerarCarro());
+
         locacaoService.editarLocacaoVeiculo(2L, locacaoDto);
     }
 }

@@ -1,9 +1,7 @@
 package br.com.targettrust.traccadastros.controllers;
 
 import br.com.targettrust.traccadastros.TracCadastrosApplication;
-import br.com.targettrust.traccadastros.dto.ReservaDto;
 import br.com.targettrust.traccadastros.servicos.ReservaService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,6 +21,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class ReservaControllerTest {
 
+    private final String JSON_VALID_REQUEST = "{ \"dataFinal\": \"2019-10-20\", \"dataInicial\": \"2019-10-21\", \"idModelo\": 1 }";
+
+    private final String JSON_INVALID_REQUEST = "{ \"dataFinal\": \"2019-10-20\", \"dataInicial\": null, \"idModelo\": 1 }";
+
     @Autowired
     private MockMvc mvc;
 
@@ -32,21 +33,34 @@ public class ReservaControllerTest {
 
     @Test
     public void reservarTest() throws Exception {
-        when(service.reservarVeiculo(new ReservaDto())).thenReturn(1L);
-        String json = new ObjectMapper().writeValueAsString(new ReservaDto());
         mvc.perform(post("/reservas/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+                .content(JSON_VALID_REQUEST))
                 .andExpect(status().isCreated());
     }
 
     @Test
+    public void reservarBadRequestTest() throws Exception {
+        mvc.perform(post("/reservas/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JSON_INVALID_REQUEST))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void editarTest() throws Exception {
-        String json = new ObjectMapper().writeValueAsString(new ReservaDto());
         mvc.perform(put("/reservas/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+                .content(JSON_VALID_REQUEST))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void editarBadRequestTest() throws Exception {
+        mvc.perform(put("/reservas/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JSON_INVALID_REQUEST))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

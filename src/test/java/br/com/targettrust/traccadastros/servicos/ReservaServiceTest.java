@@ -2,11 +2,12 @@ package br.com.targettrust.traccadastros.servicos;
 
 import br.com.targettrust.traccadastros.converter.ReservaConverter;
 import br.com.targettrust.traccadastros.dto.ReservaDto;
-import br.com.targettrust.traccadastros.entidades.Carro;
 import br.com.targettrust.traccadastros.entidades.Reserva;
 import br.com.targettrust.traccadastros.exceptions.NegocioException;
+import br.com.targettrust.traccadastros.exceptions.ObjetoNotFoundException;
 import br.com.targettrust.traccadastros.repositorio.ReservaRepository;
 import br.com.targettrust.traccadastros.stub.ReservaStub;
+import br.com.targettrust.traccadastros.stub.VeiculoStub;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -14,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
@@ -22,98 +22,80 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 public class ReservaServiceTest {
 
+    private final Long ID_MODELO = 1L;
+
+    private final Long ID_RESERVA = 1L;
+
     @InjectMocks
     private ReservaService reservaService;
-
 
     @Mock
     private VeiculoService veiculoService;
 
     @Mock
-    private ReservaRepository reservaRepository;
+    private ModeloService modeloService;
 
     @Mock
-    private ModeloService modeloService;
+    private ReservaRepository reservaRepository;
 
     @Spy
     private ReservaConverter reservaConverter;
 
     @Test
-    public void reservarVeiculo() {
-        ReservaDto reserva = ReservaStub.gerarReservaDto(1L);
-        when(modeloService.modeloDisponivel(1L, reserva.getDataInicial(), reserva.getDataFinal())).thenReturn(true);
-        when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(new Carro());
-        reservaService.reservarVeiculo(reserva);
-    }
-
-    @Test(expected = NegocioException.class)
-    public void reservarVeiculoModeloInvalido() {
-        ReservaDto reserva = ReservaStub.gerarReservaDto(1L);
-        when(modeloService.modeloDisponivel(1L, reserva.getDataInicial(), reserva.getDataFinal())).thenReturn(true);
-        when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(null);
-        reservaService.reservarVeiculo(reserva);
-    }
-
-    @Test(expected = NegocioException.class)
-    public void reservarVeiculoIndisponivel() {
-        ReservaDto reserva = ReservaStub.gerarReservaDto(2L);
-        when(modeloService.modeloDisponivel(2L, reserva.getDataInicial(), reserva.getDataFinal())).thenReturn(false);
-        when(veiculoService.definirVeiculoPorModelo(2L)).thenReturn(new Carro());
+    public void reservarComSucesso() {
+        ReservaDto reserva = ReservaStub.gerarReservaDto(ID_MODELO);
+        when(modeloService.verificarVeiculoParaEmprestimo(
+                reserva.getIdModelo(),
+                reserva.getDataInicial(),
+                reserva.getDataFinal())).thenReturn(VeiculoStub.gerarCarro());
         reservaService.reservarVeiculo(reserva);
     }
 
     @Test
     public void cancelarReserva() {
-        Reserva reserva = new Reserva();
-        reserva.setId(2L);
-        reserva.setDataCancelamento(LocalDate.now());
-        when(reservaRepository.findById(1L)).thenReturn(Optional.of(reserva));
-        reservaService.cancelar(1L);
+        Reserva reserva = ReservaStub.gerarReserva(ID_RESERVA);
+        when(reservaRepository.findById(ID_RESERVA)).thenReturn(Optional.of(reserva));
+        reservaService.cancelar(ID_RESERVA);
     }
 
-    @Test(expected = NegocioException.class)
+    @Test(expected = ObjetoNotFoundException.class)
     public void cancelarReservaInexistente() {
-        when(reservaRepository.findById(1L)).thenReturn(Optional.empty());
-        reservaService.cancelar(1L);
+        when(reservaRepository.findById(ID_RESERVA)).thenReturn(Optional.empty());
+        reservaService.cancelar(ID_RESERVA);
     }
 
     @Test(expected = NegocioException.class)
-    public void cancelarReservaJaCancelado() {
-        when(reservaRepository.findById(1L)).thenReturn(Optional.of(new Reserva()));
-        reservaService.cancelar(1L);
+    public void cancelarReservaJaCancelada() {
+        Reserva reserva = ReservaStub.gerarReservaCancelamento(ID_RESERVA);
+        when(reservaRepository.findById(ID_RESERVA)).thenReturn(Optional.of(reserva));
+        reservaService.cancelar(ID_RESERVA);
     }
 
     @Test
     public void editarReserva() {
-        Reserva reserva = new Reserva();
-        reserva.setId(1L);
-        when(reservaRepository.findById(1L)).thenReturn(Optional.of(reserva));
-        ReservaDto reservaDto = ReservaStub.gerarReservaDto(1L);
-        when(modeloService.modeloDisponivel(1L, reservaDto.getDataInicial(), reservaDto.getDataFinal())).thenReturn(true);
-        when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(new Carro());
-        reservaService.editarReservaVeiculo(1L, reservaDto);
+        Reserva reserva = ReservaStub.gerarReserva(ID_RESERVA);
+        ReservaDto reservaDto = ReservaStub.gerarReservaDto(ID_MODELO);
+
+        when(reservaRepository.findById(ID_RESERVA)).thenReturn(Optional.of(reserva));
+        when(modeloService.verificarVeiculoParaEmprestimo(
+                reservaDto.getIdModelo(),
+                reservaDto.getDataInicial(),
+                reservaDto.getDataFinal())).thenReturn(VeiculoStub.gerarCarro());
+
+        reservaService.editarReservaVeiculo(ID_RESERVA, reservaDto);
     }
 
-    @Test(expected = NegocioException.class)
-    public void editarReservaModeloInvalido() {
-        Reserva reserva = new Reserva();
-        reserva.setId(1L);
-        when(reservaRepository.findById(1L)).thenReturn(Optional.of(reserva));
-        ReservaDto reservaDto = ReservaStub.gerarReservaDto(1L);
-        when(modeloService.modeloDisponivel(1L, reservaDto.getDataInicial(), reservaDto.getDataFinal())).thenReturn(true);
-        when(veiculoService.definirVeiculoPorModelo(1L)).thenReturn(null);
+    @Test(expected = ObjetoNotFoundException.class)
+    public void editarReservaInexistente() {
+        Reserva reserva = ReservaStub.gerarReserva(ID_RESERVA);
+        ReservaDto reservaDto = ReservaStub.gerarReservaDto(ID_MODELO);
+
+        when(reservaRepository.findById(ID_RESERVA)).thenReturn(Optional.of(reserva));
+        when(modeloService.verificarVeiculoParaEmprestimo(
+                reservaDto.getIdModelo(),
+                reservaDto.getDataInicial(),
+                reservaDto.getDataFinal())).thenReturn(VeiculoStub.gerarCarro());
+
         reservaService.editarReservaVeiculo(2L, reservaDto);
     }
-
-    @Test(expected = NegocioException.class)
-    public void editarReservarVeiculoIndisponivel() {
-        Reserva reserva = new Reserva();
-        reserva.setId(1L);
-        when(reservaRepository.findById(2L)).thenReturn(Optional.of(reserva));
-        ReservaDto reservaDto = ReservaStub.gerarReservaDto(2L);
-        when(modeloService.modeloDisponivel(2L, reservaDto.getDataInicial(), reservaDto.getDataFinal())).thenReturn(false);
-        when(veiculoService.definirVeiculoPorModelo(2L)).thenReturn(new Carro());
-        reservaService.editarReservaVeiculo(2L, reservaDto);
-    }
-
 }
