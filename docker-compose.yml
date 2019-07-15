@@ -1,0 +1,41 @@
+version : '2'
+
+services:
+
+  rent-a-car-postgres:
+    image: postgres:9.6
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "trac_cadastros"
+    ports:
+      - "15432:5432"
+    networks:
+      - rent-a-car-network
+
+  rent-a-car--pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "pgadmin4@pgadmin.org"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+    ports:
+      - "16543:80"
+    depends_on:
+      - rent-a-car-postgres
+    networks:
+      - rent-a-car-network
+
+  rent-a-car-app:
+    build:
+      context: .
+      dockerfile: conf/docker-app.dockerfile
+    ports:
+      - "8585:8585"
+    depends_on:
+      - rent-a-car-postgres
+    networks:
+      - rent-a-car-network
+
+networks:
+  rent-a-car-network:
+    driver: bridge
