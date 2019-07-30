@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 	@AttributeOverride(name="versao", column=@Column(name="vcl_versao"))
 })
 @SequenceGenerator(name = "sequence_generator", sequenceName = "sq_veiculo", allocationSize = 1)
-public abstract class Veiculo extends Entidade {
+public class Veiculo extends Entidade {
 
 	@Column(name="vcl_placa", length=8, unique=true)
 	@Size(min=8, max=8)

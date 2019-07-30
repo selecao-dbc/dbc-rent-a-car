@@ -16,6 +16,9 @@ import java.util.Set;
 @SequenceGenerator(name = "sequence_generator", sequenceName = "sq_reserva", allocationSize = 1)
 public class Reserva extends Entidade {
 
+
+	
+	
     @ManyToOne
     @JoinColumn(name = "id_veiculo")
     private Veiculo veiculo;
@@ -24,7 +27,7 @@ public class Reserva extends Entidade {
     @Future
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
-            pattern = "dd.MM.yyyy HH:mm:ss",
+            pattern = "dd.MM.yyyy",
             timezone = "BRT")
     private LocalDate dataInicial;
 
@@ -32,7 +35,7 @@ public class Reserva extends Entidade {
     @Future
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
-            pattern = "dd.MM.yyyy HH:mm:ss",
+            pattern = "dd.MM.yyyy",
             timezone = "BRT")
     private LocalDate dataFinal;
 
@@ -40,7 +43,7 @@ public class Reserva extends Entidade {
     @PastOrPresent
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
-            pattern = "dd.MM.yyyy HH:mm:ss",
+            pattern = "dd.MM.yyyy",
             timezone = "BRT")
     private LocalDate dataCancelamento;
 
@@ -50,7 +53,9 @@ public class Reserva extends Entidade {
             joinColumns = {@JoinColumn(name = "id_reserva", referencedColumnName = "id")})
     private Set<Equipamento> equipamentos;
 
-    public Veiculo getVeiculo() {
+  
+
+	public Veiculo getVeiculo() {
         return veiculo;
     }
 
