@@ -21,9 +21,12 @@ import br.com.targettrust.traccadastros.entidades.Carro;
 import br.com.targettrust.traccadastros.entidades.Locacao;
 import br.com.targettrust.traccadastros.entidades.Marca;
 import br.com.targettrust.traccadastros.entidades.Modelo;
+import br.com.targettrust.traccadastros.entidades.Veiculo;
 import br.com.targettrust.traccadastros.repositorio.LocacaoRepository;
 import br.com.targettrust.traccadastros.repositorio.MarcaRepository;
 import br.com.targettrust.traccadastros.repositorio.ModeloRepository;
+import br.com.targettrust.traccadastros.repositorio.VeiculoRepository;
+import br.com.targettrust.traccadastros.servico.exception.VeiculoNaoEncontradoException;
 import br.com.targettrust.traccadastros.servico.impl.LocacaoServiceImpl;
 
 /**
@@ -49,8 +52,11 @@ public class LocacaoServiceTest {
 	@Autowired
 	private MarcaRepository marcaRepository;
 	
-	@MockBean
+	@Autowired
 	private ModeloRepository modeloRepository;
+	
+	@Autowired
+	private VeiculoRepository veiculoRepository;
 
 	private LocacaoService locacaoService;
 	
@@ -64,10 +70,9 @@ public class LocacaoServiceTest {
 	
 	@Before
 	public void setUP() throws Exception {
-		locacaoService = new LocacaoServiceImpl(locacaoRepository, marcaRepository);
+		locacaoService = new LocacaoServiceImpl(locacaoRepository, veiculoRepository);
 		
 		marca = marcaRepository.findByNome(MARCA_NOME);
-//		when(marcaRepository.findByNome(MARCA_NOME)).thenReturn(marca);
 		
 		modelo = new Modelo();
 		modelo.setAno(2017);
@@ -81,21 +86,35 @@ public class LocacaoServiceTest {
 		carro.setModelo(modelo);
 		carro.setCor(CARRO_COR);
 		carro.setPortas(4);
-		
-		
-		locacao = new Locacao();
-		locacao.setDataInicial(LocalDate.of(2019, 8, 6));
-		locacao.setDataFinal(LocalDate.of(2019, 8, 16));
-		locacao.setValor(40d);
-		locacao.setVeiculo(carro);
-		
-		
+				
+//		locacao = new Locacao();
+//		locacao.setDataInicial(LocalDate.of(2019, 8, 6));
+//		locacao.setDataFinal(LocalDate.of(2019, 8, 16));
+//		locacao.setValor(40d);
+		     
 	}
 	
 	@Test
-	public void realizarLocacaoDeUmCarro() {
-		locacaoService.salvar(locacao);		
+	public void pesquisarVeiculosPorMarca() {
+		Optional<Veiculo> optional = veiculoRepository.findByNomeModelo(MODELO_NOME);
+		assertThat(optional.isPresent()).isTrue();
+		Veiculo veiculo = optional.get();
+		assertThat(veiculo.getPlaca()).isEqualTo("JSQ-0101");
+	}
+	
+	
+	@Test
+	public void realizarLocacaoDeUmCarro() throws VeiculoNaoEncontradoException {
+		locacaoService.salvar(carro.getModelo(), locacao.getDataInicial(), locacao.getDataFinal(), locacao.getValor());		
 		verify(locacaoRepository).save(locacao);
+	}
+	
+	@Test
+	public void alugarCarroPorModeloEData() throws VeiculoNaoEncontradoException {
+		when(veiculoRepository.findByModelo(carro.getModelo())).thenReturn(Optional.of(carro));
+		locacaoService.salvar(carro.getModelo(), locacao.getDataInicial(), locacao.getDataFinal(), locacao.getValor());	
+		verify(locacaoRepository).save(locacao);
+		
 	}
 
 }

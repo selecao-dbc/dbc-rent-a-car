@@ -94,3 +94,15 @@
         (version, mar_nome, id)
     values
         (0, 'Mitsubish', nextval ('sq_marca'));
+        
+        
+        
+        
+        
+        
+insert into tb_modelo (id, mdl_nome, mdl_versao, mdl_ano, id_marca) values (nextval('sq_modelo'), 'Palio 1.0', 'ECONOMY Fire Flex 8V', 2013, 3);
+	        
+                
+insert into tb_veiculo(id, tipo, vcl_placa, vcl_ano_fabricacao, vcl_ano_modelo, vcl_cor, id_modelo) values (nextval ('sq_veiculo'), 'carro','JSQ-0101', 2013, 2013, 'vermelho', 1);
+
+
