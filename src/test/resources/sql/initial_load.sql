@@ -150,5 +150,16 @@ values (nextval ('sq_locacao'), 0, 20, '2019-08-06', '2019-08-16', (SELECT id FR
    
 insert into tb_locacao(id, version, vlr_pago, dt_inicio, dt_fim, id_veiculo) 
 values (nextval ('sq_locacao'), 0, 20, '2019-08-14', '2019-08-23', (SELECT id FROM tb_veiculo WHERE vcl_placa = 'JSQ-0202'));
+
+
+-- INSERT INTO RESERVA
+
+insert into tb_reserva(id, version, dt_inicial, dt_final, id_veiculo) 
+values (nextval ('sq_reserva'), 0, '2019-08-06', '2019-08-16', (SELECT id FROM tb_veiculo WHERE vcl_placa = 'JSQ-0101'));
+
+insert into tb_reserva(id, version, dt_inicial, dt_final, id_veiculo) 
+values (nextval ('sq_reserva'), 0, '2019-08-14', '2019-08-23', (SELECT id FROM tb_veiculo WHERE vcl_placa = 'JSQ-0202'));
+
+
         
         

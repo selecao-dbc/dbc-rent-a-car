@@ -43,13 +43,13 @@ public class LocacaoServiceImpl implements LocacaoService {
 	@Override
 	public Locacao alterar(Locacao locacao)
 			throws LocacaoNaoEncontradoException {
-		final List<Locacao> resultado = locacaoRepository.findByIdVeiculo(locacao.getId(), locacao.getDataInicial(), locacao.getDataFinal());
 		
-		if (resultado.isEmpty()) {
-			new LocacaoNaoEncontradoException("Não foi encontrada locaçao para este veículo ");			
+		if (!buscarPorVeiculo(locacao.getVeiculo().getId(), locacao.getDataInicial(), locacao.getDataFinal()).isEmpty()) {
+			return locacaoRepository.save(locacao);			
+		} else {
+			return null;
 		}
 		
-		return locacaoRepository.save(locacao);	
 	}
 
 	@Override
@@ -69,12 +69,9 @@ public class LocacaoServiceImpl implements LocacaoService {
 
 	@Override
 	public void deletar(Locacao locacao) throws LocacaoNaoEncontradoException {
-		final List<Locacao> resultado = locacaoRepository.findByIdVeiculo(locacao.getVeiculo().getId(), locacao.getDataInicial(), locacao.getDataFinal());
-		if (resultado.isEmpty()) {
-			new LocacaoNaoEncontradoException("Não foi encontrada locaçao para este veículo ");			
-		}
-		
-		locacaoRepository.deleteByVeiculo(locacao.getVeiculo().getPlaca());	
+		if (!buscarPorVeiculo(locacao.getVeiculo().getId(), locacao.getDataInicial(), locacao.getDataFinal()).isEmpty()) {
+			locacaoRepository.deleteByVeiculo(locacao.getVeiculo().getPlaca());				
+		}		
 	}
 
 }
