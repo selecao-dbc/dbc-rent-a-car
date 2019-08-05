@@ -6,20 +6,26 @@ import org.springframework.http.HttpStatus;
 
 import br.com.targettrust.traccadastros.entidades.Acessorio;
 import br.com.targettrust.traccadastros.entidades.Carro;
+import br.com.targettrust.traccadastros.entidades.Equipamento;
 import br.com.targettrust.traccadastros.entidades.Locacao;
 import br.com.targettrust.traccadastros.entidades.Modelo;
 import br.com.targettrust.traccadastros.entidades.Veiculo;
+import br.com.targettrust.traccadastros.repositorio.LocacaoRepository;
 import br.com.targettrust.traccadastros.repositorio.VeiculoRepository;
 import br.com.targettrust.traccadastros.test.TracApplicationTest;
 import io.restassured.http.ContentType;
 
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class LocacaoControllerTest extends TracApplicationTest {
 
@@ -32,32 +38,64 @@ public class LocacaoControllerTest extends TracApplicationTest {
 
 	@Autowired
 	private VeiculoRepository veiculoRepository;
+	
+	@Autowired
+	private LocacaoRepository locacaoRepository;
 
 	@Test
 	public void alugarCarroPorModeloEData() {
 		final Optional<Veiculo> carro = veiculoRepository.findByNomeModelo(MODELO_NOME_PALIO);
 		
-//		carro.get().setAcessorios(new HashSet());
 		final Acessorio acessorio = new Acessorio();
 		acessorio.setDescricao("Ar condicionado");
 		
-		carro.get().addAcessorios(acessorio);
-
-		final Locacao locacao = new Locacao(carro.get(), DATA_INICIAL, DATA_FINAL, 20d);
+		final Equipamento equipamento = new Equipamento();
+		equipamento.setDescricao("Equipamento 1");
+		
+		final Locacao locacao = new Locacao(carro.get(), DATA_INICIAL, DATA_FINAL, 20d);		
+		locacao.getEquipamentos().add(equipamento);
+		
+		carro.get().getAcessorios().add(acessorio);
 		
 		given()
 			.request()
 			.header("Accept", ContentType.ANY)
 			.header("Content-type", ContentType.JSON)
-			.body(carro)
+			.body(locacao)
 		.when()
 		.post("/locacoes")
 		.then()
 			.log().headers().and()
 			.log().body().and()
 				.statusCode(HttpStatus.CREATED.value())
-				.body("modelo", equalTo(MODELO_NOME_PALIO), "placa", equalTo(CARRO_PLACA));
+				.body("veiculo.modelo.nome", equalTo(MODELO_NOME_PALIO), "veiculo.placa", equalTo(CARRO_PLACA));
 
+	}
+	
+	@Test
+	public void alterarLocacaoDeUmVeiculo() throws Exception {		
+		Optional<Veiculo> optional = veiculoRepository.findByNomeModelo(MODELO_NOME_PALIO);		
+		Veiculo carro = optional.get();		
+		
+		List<Locacao> locacaoList = locacaoRepository.findByIdVeiculo(carro.getId(), DATA_INICIAL, DATA_FINAL);		
+		Locacao locacao = locacaoList.get(0);
+		locacao.setValor(20d);
+		
+		given()
+		.request()
+			.header("Accept", ContentType.ANY)
+			.header("Content-type", ContentType.JSON)
+			.body(locacao)
+		.when()
+			.pathParam("id", locacao.getId())
+		.put("/locacoes/{id}")
+		.then()
+			.log().headers().and()
+			.log().body().and()
+				.statusCode(HttpStatus.OK.value())
+				.body("valor", equalTo(20.0f));
+		
+		
 	}
 
 }

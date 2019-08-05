@@ -101,10 +101,12 @@
 -- INSERT INTO MODELO CARRO       
 
 insert into tb_modelo (id, version, mdl_nome, mdl_versao, mdl_ano, id_marca ) 
-values (nextval('sq_modelo'), 0, 'Palio 1.0', 'ECONOMY Fire Flex 8V', 2013, ( SELECT id FROM tb_marca WHERE mar_nome = 'Fiat'));
+select nextval('sq_modelo'), 0, 'Palio 1.0', 'ECONOMY Fire Flex 8V', 2013, id
+FROM tb_marca WHERE mar_nome = 'Fiat';
 	                        
 insert into tb_modelo (id, version, mdl_nome, mdl_versao, mdl_ano, id_marca ) 
-values (nextval('sq_modelo'), 0, 'Fiesta 1.0', 'Flex 8V', 2015, ( SELECT id FROM tb_marca WHERE mar_nome = 'Ford'));
+select nextval('sq_modelo'), 0, 'Fiesta 1.0', 'Flex 8V', 2015, id
+FROM tb_marca WHERE mar_nome = 'Ford';
 
 
 
@@ -112,10 +114,12 @@ values (nextval('sq_modelo'), 0, 'Fiesta 1.0', 'Flex 8V', 2015, ( SELECT id FROM
 -- INSERT INTO MODELO MOTO    
 
 insert into tb_modelo (id, version, mdl_nome, mdl_versao, mdl_ano, id_marca ) 
-values (nextval('sq_modelo'), 0, 'F700', 'GS', 2013, ( SELECT id FROM tb_marca WHERE mar_nome = 'BMW'));
+select nextval('sq_modelo'), 0, 'F700', 'GS', 2013, id
+FROM tb_marca WHERE mar_nome = 'BMW';
 	                        
 insert into tb_modelo (id, version, mdl_nome, mdl_versao, mdl_ano, id_marca ) 
-values (nextval('sq_modelo'), 0, 'R1200', 'RT', 2015, ( SELECT id FROM tb_marca WHERE mar_nome = 'BMW'));
+select nextval('sq_modelo'), 0, 'R1200', 'RT', 2015, id 
+FROM tb_marca WHERE mar_nome = 'BMW';
 
 
 
@@ -123,10 +127,12 @@ values (nextval('sq_modelo'), 0, 'R1200', 'RT', 2015, ( SELECT id FROM tb_marca 
 -- INSERT INTO VEICULO TIPO CARRO     
 	                     
 insert into tb_veiculo(id, version, tipo, vcl_placa, vcl_ano_fabricacao, vcl_ano_modelo, vcl_cor, vcl_portas, id_modelo) 
-values (nextval ('sq_veiculo'), 0, 'CARRO','JSQ-0101', 2013, 2013, 'vermelho', 4, (SELECT id FROM tb_modelo WHERE mdl_nome = 'Palio 1.0'));
+select nextval ('sq_veiculo'), 0, 'CARRO','JSQ-0101', 2013, 2013, 'vermelho', 4, id
+FROM tb_modelo WHERE mdl_nome = 'Palio 1.0';
 
 insert into tb_veiculo(id, version, tipo, vcl_placa, vcl_ano_fabricacao, vcl_ano_modelo, vcl_cor, vcl_portas, id_modelo) 
-values (nextval ('sq_veiculo'), 0, 'CARRO','JSQ-9999', 2015, 2015, 'prata', 4, (SELECT id FROM tb_modelo WHERE mdl_nome = 'Fiesta 1.0'));
+select nextval ('sq_veiculo'), 0, 'CARRO','JSQ-9999', 2015, 2015, 'prata', 4, id
+FROM tb_modelo WHERE mdl_nome = 'Fiesta 1.0';
 
 	
 	
@@ -134,10 +140,12 @@ values (nextval ('sq_veiculo'), 0, 'CARRO','JSQ-9999', 2015, 2015, 'prata', 4, (
 -- INSERT INTO VEICULO TIPO MOTO     
 	                     
 insert into tb_veiculo(id, version, tipo, vcl_placa, vcl_ano_fabricacao, vcl_ano_modelo, vcl_cor, vcl_cilindradas, id_modelo) 
-values (nextval ('sq_veiculo'), 0, 'MOTO','JSQ-0202', 2013, 2013, 'vermelho', 700, (SELECT id FROM tb_modelo WHERE mdl_nome = 'F700'));
+select nextval ('sq_veiculo'), 0, 'MOTO','JSQ-0202', 2013, 2013, 'vermelho', 700, id
+FROM tb_modelo WHERE mdl_nome = 'F700';
 
 insert into tb_veiculo(id, version, tipo, vcl_placa, vcl_ano_fabricacao, vcl_ano_modelo, vcl_cor, vcl_cilindradas, id_modelo) 
-values (nextval ('sq_veiculo'), 0, 'MOTO','JSQ-4444', 2015, 2015, 'prata', 1200, (SELECT id FROM tb_modelo WHERE mdl_nome = 'R1200'));
+select nextval ('sq_veiculo'), 0, 'MOTO','JSQ-4444', 2015, 2015, 'prata', 1200, id
+FROM tb_modelo WHERE mdl_nome = 'R1200';
 
 	
 	

@@ -119,7 +119,7 @@ public class LocacaoServiceTest {
 	}
 	
 	@Test
-	public void alterarLocacaoDeUmVeiculo()  throws Exception {
+	public void alterarLocacaoDeUmVeiculo() throws Exception {
 		Optional<Veiculo> optional = veiculoRepository.findByNomeModelo(MODELO_NOME_PALIO);
 		assertThat(optional.isPresent()).isTrue();
 		

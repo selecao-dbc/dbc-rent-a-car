@@ -13,8 +13,10 @@ public class Modelo extends Entidade{
 	
 	@Column(name="mdl_nome")
 	private String nome;	
+	
 	@Column(name="mdl_versao")
 	private String versao;
+	
 	@Column(name="mdl_ano")
 	private Integer ano;
 	
@@ -28,7 +30,7 @@ public class Modelo extends Entidade{
 			inverseJoinColumns = {@JoinColumn(name = "id_modelo", referencedColumnName = "id") } )
 	private Set<Acessorio> acessorios;
 
-	@ElementCollection
+	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name ="rl_anos_modelos")
 	@Column(name="ano")
 	private Set<Integer> anos;
