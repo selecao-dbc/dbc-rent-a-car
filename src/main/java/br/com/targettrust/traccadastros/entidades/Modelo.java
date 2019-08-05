@@ -22,7 +22,7 @@ public class Modelo extends Entidade{
 	@JoinColumn(name="id_marca")
 	private Marca marca;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "rl_modelo_acessorio",
 			joinColumns = {@JoinColumn(name = "id_acessorio", referencedColumnName = "id") },
 			inverseJoinColumns = {@JoinColumn(name = "id_modelo", referencedColumnName = "id") } )
@@ -32,8 +32,6 @@ public class Modelo extends Entidade{
 	@CollectionTable(name ="rl_anos_modelos")
 	@Column(name="ano")
 	private Set<Integer> anos;
-	
-	
 
 	public Integer getAno() {
 		return ano;

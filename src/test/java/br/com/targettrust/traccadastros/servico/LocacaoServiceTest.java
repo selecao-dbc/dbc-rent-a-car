@@ -70,18 +70,10 @@ public class LocacaoServiceTest {
 	
 	private VeiculoService veiculoService;
 	
-	private Locacao locacao;
-	
 	@Before
 	public void setUP() throws Exception {
 		locacaoService = new LocacaoServiceImpl(locacaoRepository, veiculoRepository);
-		veiculoService = new VeiculoServiceImpl(veiculoRepository);
-				
-		locacao = new Locacao();
-		locacao.setDataInicial(DATA_INICIAL);
-		locacao.setDataFinal(DATA_FINAL);
-		locacao.setValor(40d);
-		     
+		veiculoService = new VeiculoServiceImpl(veiculoRepository);		     
 	}
 	
 	@Test

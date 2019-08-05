@@ -28,10 +28,10 @@ public abstract class Veiculo extends Entidade {
 	@JoinColumn(name="id_modelo")
 	private Modelo modelo;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "rl_veiculo_acessorio",
 			joinColumns = {@JoinColumn(name = "id_acessorio", referencedColumnName = "id") },
-			inverseJoinColumns = {@JoinColumn(name = "id_veiculo", referencedColumnName = "id") } )
+			inverseJoinColumns = { @JoinColumn(name = "id_veiculo", referencedColumnName = "id") })
 	private Set<Acessorio> acessorios;
 
 	public String getPlaca() {
@@ -73,5 +73,14 @@ public abstract class Veiculo extends Entidade {
 	public void setAcessorios(Set<Acessorio> acessorios) {
 		this.acessorios = acessorios;
 	}
+	
+	public void addAcessorios(Acessorio acessorio) {
+        if (!getAcessorios().contains(acessorio)) {
+        	getAcessorios().add(acessorio);
+            if (acessorio.getVeiculos() != null) {
+            	acessorio.getVeiculos().remove(acessorio);
+            }
+        }
+    }
 
 }

@@ -44,6 +44,13 @@ public class Locacao extends Entidade{
 		joinColumns = {@JoinColumn(name = "id_locacao", referencedColumnName = "id") } )
 	private Set<Equipamento> equipamentos;
 
+	public Locacao(Veiculo veiculo, LocalDate dataInicial, LocalDate dataFinal, Double valor) {
+		this.veiculo = veiculo;
+		this.dataInicial = dataInicial;
+		this.dataFinal = dataFinal;
+		this.valor = valor;
+	}
+
 	public Veiculo getVeiculo() {
 		return veiculo;
 	}
