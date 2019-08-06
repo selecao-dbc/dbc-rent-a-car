@@ -76,9 +76,9 @@ public class LocacaoServiceImpl implements LocacaoService {
 	}
 
 	@Override
-	public void deletar(Locacao locacao) throws LocacaoNaoEncontradoException {
-		if (!buscarPorVeiculo(locacao.getVeiculo().getId(), locacao.getDataInicial(), locacao.getDataFinal()).isEmpty()) {
-			locacaoRepository.deleteByVeiculo(locacao.getVeiculo().getPlaca());				
+	public void deletar(Long id) throws LocacaoNaoEncontradoException {
+		if (locacaoRepository.findById(id) != null) {
+			locacaoRepository.deleteById(id);				
 		}		
 	}
 

@@ -10,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.targettrust.traccadastros.entidades.Locacao;
 import br.com.targettrust.traccadastros.entidades.Marca;
+import br.com.targettrust.traccadastros.exception.LocacaoNaoEncontradoException;
 import br.com.targettrust.traccadastros.exception.VeiculoNaoEncontradoException;
 import br.com.targettrust.traccadastros.repositorio.LocacaoRepository;
 import br.com.targettrust.traccadastros.servico.LocacaoService;
@@ -79,6 +81,11 @@ public class LocacaoController {
 			return ResponseEntity.ok(locacaoService.salvar(locacao));
 		}
 		return ResponseEntity.notFound().build();		
+	}
+	
+	@DeleteMapping("/{id}")
+	public void deleteById(@PathVariable("id") Long id) throws Exception {
+		locacaoService.deletar(id);
 	}
 	
 }

@@ -97,5 +97,24 @@ public class LocacaoControllerTest extends TracApplicationTest {
 		
 		
 	}
+	
+	@Test
+	public void deletarUmaLocacao() {
+		Optional<Locacao> locacaoList = locacaoRepository.findById(1L);		
+		Locacao locacao = locacaoList.get();
+		
+		given()
+		.request()
+			.header("Accept", ContentType.ANY)
+			.header("Content-type", ContentType.JSON)
+			.body(locacao)
+		.when()
+			.pathParam("id", locacao.getId())
+		.delete("/locacoes/{id}")
+		.then()
+			.log().headers().and()
+			.log().body().and()
+				.statusCode(HttpStatus.OK.value());		
+	}
 
 }

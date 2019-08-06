@@ -144,7 +144,7 @@ public class LocacaoServiceTest {
 		List<Locacao> locacaoList = locacaoService.buscarPorVeiculo(carro.getId(), DATA_INICIAL, DATA_FINAL);		
 		assertThat(locacaoList).hasSize(1);
 		
-		locacaoService.deletar(locacaoList.get(0));
+		locacaoService.deletar(locacaoList.get(0).getId());
 				
 		locacaoList = locacaoService.buscarPorVeiculo(carro.getId(), DATA_INICIAL, DATA_FINAL);		
 		assertThat(locacaoList).hasSize(0);
@@ -214,7 +214,7 @@ public class LocacaoServiceTest {
 		List<Locacao> locacaoList = locacaoService.buscarPorVeiculo(moto.getId(), MOTO_DATA_INICIAL, MOTO_DATA_FINAL);		
 		assertThat(locacaoList).hasSize(1);
 		
-		locacaoService.deletar(locacaoList.get(0));
+		locacaoService.deletar(locacaoList.get(0).getId());
 				
 		locacaoList = locacaoService.buscarPorVeiculo(moto.getId(), MOTO_DATA_INICIAL, MOTO_DATA_FINAL);		
 		assertThat(locacaoList).hasSize(0);

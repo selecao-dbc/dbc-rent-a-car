@@ -21,7 +21,7 @@ public interface LocacaoService {
 
 	public List<Locacao> buscarTodos();
 
-	public void deletar(Locacao locacao) throws LocacaoNaoEncontradoException;
+	public void deletar(Long id) throws LocacaoNaoEncontradoException;
 
 	public Locacao buscarPorId(Long id) throws LocacaoNaoEncontradoException;
 
