@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -25,12 +26,12 @@ public class Locacao extends Entidade{
 	
 	@Column(name="dt_inicio")
 	@FutureOrPresent
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate dataInicial;
 	
 	@Column(name="dt_fim")
 	@Future
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate dataFinal;
 	
 	@Column(name="vlr_pago")
@@ -38,11 +39,22 @@ public class Locacao extends Entidade{
 	@Min(1)
 	private Double valor;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinTable(name = "rl_locacao_equipamento", 
 		inverseJoinColumns = {@JoinColumn(name = "id_equipamento", referencedColumnName = "id") }, 
 		joinColumns = {@JoinColumn(name = "id_locacao", referencedColumnName = "id") } )
-	private Set<Equipamento> equipamentos;
+	private Set<Equipamento> equipamentos = new HashSet<Equipamento>();
+
+	public Locacao() {
+		super();
+	}
+			
+	public Locacao(Veiculo veiculo, LocalDate dataInicial, LocalDate dataFinal, Double valor) {
+		this.veiculo = veiculo;
+		this.dataInicial = dataInicial;
+		this.dataFinal = dataFinal;
+		this.valor = valor;
+	}
 
 	public Veiculo getVeiculo() {
 		return veiculo;
@@ -74,6 +86,14 @@ public class Locacao extends Entidade{
 
 	public void setValor(Double valor) {
 		this.valor = valor;
+	}
+
+	public Set<Equipamento> getEquipamentos() {
+		return equipamentos;
+	}
+
+	public void setEquipamentos(Set<Equipamento> equipamentos) {
+		this.equipamentos = equipamentos;
 	}
 	
 	

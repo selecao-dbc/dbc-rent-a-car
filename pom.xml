@@ -76,6 +76,13 @@
 			<version>2.2.6</version>
 		</dependency>
 		<!--  Final das dependências de validação de beans -->
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>3.0.3</version>
+			<scope>test</scope>
+		</dependency>
+	
 	</dependencies>
 
 	<build>

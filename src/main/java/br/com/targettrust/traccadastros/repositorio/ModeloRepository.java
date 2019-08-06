@@ -16,7 +16,8 @@ public interface ModeloRepository extends JpaRepository<Modelo, Long>{
 	@Transactional
 	void deleteByNome(String nome);
 	
-	Modelo findByNome(String nome);
+	@Query("SELECT modelo FROM Modelo modelo JOIN FETCH modelo.anos WHERE modelo.nome = (:nome)")
+	Modelo findByNome(@Param("nome") String nome);
 
 	@Query("delete Modelo modelo "
 	       + " where modelo.id in( "
