@@ -24,7 +24,7 @@ public class Reserva extends Entidade {
     @Future
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
-            pattern = "dd.MM.yyyy HH:mm:ss",
+            pattern = "yyyy-MM-dd",
             timezone = "BRT")
     private LocalDate dataInicial;
 
@@ -32,7 +32,7 @@ public class Reserva extends Entidade {
     @Future
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
-            pattern = "dd.MM.yyyy HH:mm:ss",
+            pattern = "yyyy-MM-dd",
             timezone = "BRT")
     private LocalDate dataFinal;
 
@@ -40,11 +40,11 @@ public class Reserva extends Entidade {
     @PastOrPresent
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
-            pattern = "dd.MM.yyyy HH:mm:ss",
+            pattern = "yyyy-MM-dd",
             timezone = "BRT")
     private LocalDate dataCancelamento;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinTable(name = "rl_reserva_equipamento",
             inverseJoinColumns = {@JoinColumn(name = "id_equipamento", referencedColumnName = "id")},
             joinColumns = {@JoinColumn(name = "id_reserva", referencedColumnName = "id")})

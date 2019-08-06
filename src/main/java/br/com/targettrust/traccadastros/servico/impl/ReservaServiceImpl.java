@@ -1,23 +1,26 @@
 package br.com.targettrust.traccadastros.servico.impl;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import org.springframework.stereotype.Service;
 
-import br.com.targettrust.traccadastros.entidades.Locacao;
 import br.com.targettrust.traccadastros.entidades.Modelo;
 import br.com.targettrust.traccadastros.entidades.Reserva;
 import br.com.targettrust.traccadastros.entidades.Veiculo;
-import br.com.targettrust.traccadastros.exception.LocacaoNaoEncontradoException;
 import br.com.targettrust.traccadastros.exception.ReservaNaoEncontradoException;
 import br.com.targettrust.traccadastros.exception.VeiculoNaoEncontradoException;
 import br.com.targettrust.traccadastros.repositorio.ReservaRepository;
 import br.com.targettrust.traccadastros.repositorio.VeiculoRepository;
 import br.com.targettrust.traccadastros.servico.ReservaService;
 
+/**
+ * 
+ * @author Waldecleber Gonçalves
+ * @date 6 de ago de 2019
+ */
+@Service
 public class ReservaServiceImpl implements ReservaService {
 
 	private final ReservaRepository reservaRepository;
@@ -67,16 +70,14 @@ public class ReservaServiceImpl implements ReservaService {
 			return reservaRepository.save(reserva);				
 		} else {
 			return null;
-		}
-		
+		}		
 	}
 
 	@Override
-	public void deletar(Reserva reserva) throws ReservaNaoEncontradoException {
-		if (!buscarPorVeiculo(reserva.getVeiculo().getId(), reserva.getDataInicial(), reserva.getDataFinal()).isEmpty()) {
-			reservaRepository.deleteByPlaca(reserva.getVeiculo().getPlaca());				
-		}
-		
+	public void deletar(Long id) throws ReservaNaoEncontradoException {
+		if (reservaRepository.findById(id) != null) {
+			reservaRepository.deleteById(id);				
+		}		
 	}
 
 	@Override
@@ -85,6 +86,23 @@ public class ReservaServiceImpl implements ReservaService {
 			reserva.setDataCancelamento(LocalDate.now());
 			reservaRepository.save(reserva);
 		}
+	}
+
+	@Override
+	public Reserva salvar(Reserva reserva) throws VeiculoNaoEncontradoException {
+		Optional<Veiculo> optionalVeiculo = veiculoRepository.findByModelo(reserva.getVeiculo().getModelo());
+		if (!optionalVeiculo.isPresent()) {
+			throw new VeiculoNaoEncontradoException("Não foi encontrado nenhum veiculo com este modelo: " + reserva.getVeiculo().getModelo());
+		}
+		
+		return reservaRepository.save(reserva);		
+	}
+
+	@Override
+	public Reserva buscarPorId(Long id) throws ReservaNaoEncontradoException {
+		final Optional<Reserva> optional = reservaRepository.findById(id);
+		return optional.orElseThrow(() ->
+				new ReservaNaoEncontradoException("Não existe reserva com este ID"));
 	}
 
 }

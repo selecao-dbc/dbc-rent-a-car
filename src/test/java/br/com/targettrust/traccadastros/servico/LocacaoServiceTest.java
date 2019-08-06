@@ -45,14 +45,14 @@ public class LocacaoServiceTest {
 	private static final String MODELO_NOME_PALIO = "Palio 1.0";
 	private static final String MODELO_NOME_FIESTA = "Fiesta 1.0";
 	private static final String CARRO_PLACA = "JSQ-0101";
-	private static final LocalDate DATA_INICIAL = LocalDate.of(2019, 8, 6);
-	private static final LocalDate DATA_FINAL = LocalDate.of(2019, 8, 16);
+	private static final LocalDate DATA_INICIAL = LocalDate.of(2019, 9, 6);
+	private static final LocalDate DATA_FINAL = LocalDate.of(2019, 9, 16);
 	
 	private static final String MARCA_NOME_BMW = "BMW";
 	private static final String MODELO_NOME_F700 = "F700";
 	private static final String MOTO_PLACA = "JSQ-0202";
-	private static final LocalDate MOTO_DATA_INICIAL = LocalDate.of(2019, 8, 14);
-	private static final LocalDate MOTO_DATA_FINAL = LocalDate.of(2019, 8, 23);
+	private static final LocalDate MOTO_DATA_INICIAL = LocalDate.of(2019, 9, 14);
+	private static final LocalDate MOTO_DATA_FINAL = LocalDate.of(2019, 9, 23);
 
 	@Autowired
 	private LocacaoRepository locacaoRepository;

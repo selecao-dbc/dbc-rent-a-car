@@ -2,7 +2,6 @@ package br.com.targettrust.traccadastros.servico;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import br.com.targettrust.traccadastros.entidades.Locacao;
 import br.com.targettrust.traccadastros.entidades.Modelo;

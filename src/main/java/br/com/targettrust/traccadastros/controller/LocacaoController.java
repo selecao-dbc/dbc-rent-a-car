@@ -1,11 +1,12 @@
 package br.com.targettrust.traccadastros.controller;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,14 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.targettrust.traccadastros.entidades.Locacao;
-import br.com.targettrust.traccadastros.entidades.Marca;
-import br.com.targettrust.traccadastros.exception.LocacaoNaoEncontradoException;
-import br.com.targettrust.traccadastros.exception.VeiculoNaoEncontradoException;
-import br.com.targettrust.traccadastros.repositorio.LocacaoRepository;
 import br.com.targettrust.traccadastros.servico.LocacaoService;
 
 /**
@@ -48,17 +45,14 @@ public class LocacaoController {
 		return ResponseEntity.ok(locacaoService.buscarTodos());		
 	}
 	
-//	@GetMapping("/search")
-//	public HttpEntity<List<Modelo>> search(
-//			@RequestParam(name="id", required=false) Long id, 
-//			@RequestParam(name="nome", required=false) String nome,
-//			@RequestParam(name="ano", required=false) Integer ano,
-//			@RequestParam(name="marca", required=false) String marca,
-//			@RequestParam(name="idMarca", required=false) Long idMarca) {
-//		return ResponseEntity.ok(
-//				modeloRepository.search(id, nome, ano, idMarca, marca)
-//				);
-//	}
+	@GetMapping("/search")
+	public HttpEntity<List<Locacao>> search(
+			@RequestParam(name="idVeiculo", required=false) Long idVeiculo,
+			@RequestParam(name="dataInicial", required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+			@RequestParam(name="dataFinal", required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal) throws Exception {
+		return ResponseEntity.ok(
+				locacaoService.buscarPorVeiculo(idVeiculo, dataInicial, dataFinal));
+	}
 
 	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)

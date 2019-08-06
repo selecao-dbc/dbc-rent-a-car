@@ -18,8 +18,12 @@ public interface ReservaService {
 
 	public Reserva alterar(Reserva reserva) throws ReservaNaoEncontradoException;
 
-	public void deletar(Reserva reserva) throws ReservaNaoEncontradoException;
+	public void deletar(Long id) throws ReservaNaoEncontradoException;
 
 	public void cancelarReserva(Reserva reserva) throws ReservaNaoEncontradoException;
+
+	public Reserva salvar(Reserva reserva) throws VeiculoNaoEncontradoException;
+
+	public Reserva buscarPorId(Long id) throws ReservaNaoEncontradoException;
 
 }

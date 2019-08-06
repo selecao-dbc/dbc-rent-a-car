@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -36,6 +34,7 @@ import br.com.targettrust.traccadastros.servico.impl.VeiculoServiceImpl;
  *
  */
 @Sql(value = "/sql/initial_load.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = "/sql/clean_database.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @TestPropertySource("classpath:application.properties")
@@ -46,8 +45,8 @@ public class ReservaServiceTest {
 	private static final String MODELO_NOME_FIESTA = "Fiesta 1.0";
 	private static final String MODELO_NOME_F700 = "F700";
 	private static final String MOTO_PLACA = "JSQ-0202";
-	private static final LocalDate DATA_INICIAL = LocalDate.of(2019, 8, 6);
-	private static final LocalDate DATA_FINAL = LocalDate.of(2019, 8, 16);
+	private static final LocalDate DATA_INICIAL = LocalDate.of(2019, 9, 6);
+	private static final LocalDate DATA_FINAL = LocalDate.of(2019, 9, 16);
 
 	@Autowired
 	private ReservaRepository reservaRepository;
@@ -57,9 +56,6 @@ public class ReservaServiceTest {
 		
 	@Autowired
 	private VeiculoRepository veiculoRepository;
-	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();	
 	
 	private ReservaService reservaService;
 	
@@ -142,7 +138,7 @@ public class ReservaServiceTest {
 		List<Reserva> reservaList = reservaService.buscarPorVeiculo(carro.getId(), DATA_INICIAL, DATA_FINAL);		
 		assertThat(reservaList).hasSize(1);
 		
-		reservaService.deletar(reservaList.get(0));
+		reservaService.deletar(reservaList.get(0).getId());
 				
 		reservaList = reservaService.buscarPorVeiculo(carro.getId(), DATA_INICIAL, DATA_FINAL);		
 		assertThat(reservaList).hasSize(0);
@@ -168,7 +164,7 @@ public class ReservaServiceTest {
 	 */
 	
 	@Test
-	public void alugarMotoPorModeloEData() throws Exception {
+	public void reservarMotoPorModeloEData() throws Exception {
 		Veiculo moto = veiculoService.buscarPorModelo(MODELO_NOME_F700);
 		assertThat(moto.getPlaca()).isEqualTo(MOTO_PLACA);
 		
@@ -187,7 +183,7 @@ public class ReservaServiceTest {
 		List<Reserva> reservaList = reservaService.buscarPorVeiculo(moto.getId(), DATA_INICIAL, DATA_FINAL);		
 		assertThat(reservaList).hasSize(1);
 		
-		reservaService.deletar(reservaList.get(0));
+		reservaService.deletar(reservaList.get(0).getId());
 				
 		reservaList = reservaService.buscarPorVeiculo(moto.getId(), DATA_INICIAL, DATA_FINAL);		
 		assertThat(reservaList).hasSize(0);

@@ -15,6 +15,11 @@ import br.com.targettrust.traccadastros.repositorio.LocacaoRepository;
 import br.com.targettrust.traccadastros.repositorio.VeiculoRepository;
 import br.com.targettrust.traccadastros.servico.LocacaoService;
 
+/**
+ * 
+ * @author Waldecleber Gonçalves
+ * @date 6 de ago de 2019
+ */
 @Service
 public class LocacaoServiceImpl implements LocacaoService {
 	
