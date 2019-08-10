@@ -45,7 +45,7 @@ public class EquipamentoController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}		
 	}
-
+                   
 	@GetMapping("/search")
 	public HttpEntity<List<Equipamento>> search(
 			@RequestParam(name="id", required=false) Long id, 
