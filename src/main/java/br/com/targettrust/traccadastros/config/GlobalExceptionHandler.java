@@ -2,13 +2,14 @@ package br.com.targettrust.traccadastros.config;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+	
+	
 	
 	@Autowired
 	private transient Logger logger;
@@ -19,4 +20,11 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.notFound().build();
 	}
 	
+	
+	@ExceptionHandler(VeiculoIndisponivelRuntimeException.class)
+	public ResponseEntity handlerVeiculoIndisponivel(VeiculoIndisponivelRuntimeException ex) {
+		return ResponseEntity.badRequest().body(ex.getErro());
+	}
+	
+
 }
