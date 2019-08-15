@@ -22,7 +22,7 @@ public class ReservaController {
 	@Autowired
 	private ReservaService reservaService;
 	
-	@PostMapping(value = "salvar")
+	@PostMapping
 	public Reserva criar(@RequestParam(required = true) Long modelo,
 			@RequestParam(required = true) @DateTimeFormat LocalDate dataInicial,
 			@RequestParam(required = true) @DateTimeFormat LocalDate dataFinal) {
