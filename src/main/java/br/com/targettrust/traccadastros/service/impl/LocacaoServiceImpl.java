@@ -1,6 +1,7 @@
 package br.com.targettrust.traccadastros.service.impl;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class LocacaoServiceImpl implements LocacaoService{
 		locacao.setDataFinal(dataFinal);
 		locacao.setValor(valor);
 		locacao.setVersion(1l);		
-		return locacao;
+		return locacaoRespository.save(locacao);
 	}
 
 
@@ -62,6 +63,12 @@ public class LocacaoServiceImpl implements LocacaoService{
 	@Override
 	public Locacao findById(Long id) {		
 		return locacaoRespository.findById(id).orElseThrow(()->new NotFoundRuntimeException("nenhuma reserva encontrada para id = "+id));
+	}
+
+
+	@Override
+	public List<Locacao> findAll() {		
+		return locacaoRespository.findAll();
 	}
 
 
