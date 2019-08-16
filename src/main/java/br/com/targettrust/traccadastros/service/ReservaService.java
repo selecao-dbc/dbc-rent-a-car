@@ -3,9 +3,6 @@ package br.com.targettrust.traccadastros.service;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-
-import br.com.targettrust.traccadastros.entidades.Modelo;
 import br.com.targettrust.traccadastros.entidades.Reserva;
 
 public interface ReservaService {

@@ -55,6 +55,16 @@ public class ReservaTest extends TracApplicationTest{
 	}
 	
 	@Test
+	public void testeAlterarReservaNotFound() throws Exception {		
+		mvc.perform(put("/reservas/1")
+				.contentType("application/json")
+				.param("dataInicial", DATA_INICIAL.plusDays(2).toString())
+				.param("dataFinal", DATA_FINAL.plusDays(1).toString())
+				.param("modelo", "1")
+				).andExpect(status().isNotFound());
+	}
+	
+	@Test
 	public void testGetById() throws Exception {
 		Carro carro = criaCarro();
 		Reserva reserva = reservaService.salvar(carro.getModelo().getId(), DATA_INICIAL, DATA_FINAL);
@@ -62,10 +72,20 @@ public class ReservaTest extends TracApplicationTest{
 	}
 	
 	@Test
+	public void testGetByIdNotFound() throws Exception {
+		mvc.perform(get("/reservas/1")).andExpect(status().isNotFound());
+	}
+	
+	@Test
 	public void testCancelar() throws Exception {
 		Carro carro = criaCarro();
 		Reserva reserva = reservaService.salvar(carro.getModelo().getId(), DATA_INICIAL, DATA_FINAL);
 		mvc.perform(put("/reservas/cancelar/"+reserva.getId())).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testCancelarNotFound() throws Exception {
+		mvc.perform(put("/reservas/cancelar/1")).andExpect(status().isNotFound());
 	}
 	
 	@Test

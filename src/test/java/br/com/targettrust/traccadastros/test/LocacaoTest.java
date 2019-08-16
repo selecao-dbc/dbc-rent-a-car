@@ -1,6 +1,5 @@
 package br.com.targettrust.traccadastros.test;
 
-import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,7 +36,7 @@ public class LocacaoTest extends TracApplicationTest {
 
 	@Test
 	public void testFindByIdNotFound() throws Exception {		
-		mvc.perform(get("/locacoes/-11")).andExpect(status().isNotFound());
+		mvc.perform(get("/locacoes/1")).andExpect(status().isNotFound());
 	}
 	
 	@Test
@@ -47,6 +46,10 @@ public class LocacaoTest extends TracApplicationTest {
 		mvc.perform(delete("/locacoes/"+locacao.getId())).andExpect(status().isOk());
 	}
 	
+	@Test
+	public void testDeleteNotFound() throws Exception {
+		mvc.perform(delete("/locacoes/1")).andExpect(status().isNotFound());
+	}
 	@Test
 	public void testUpdate() throws Exception {
 		Long modelo = criaCarro().getModelo().getId();
@@ -59,7 +62,7 @@ public class LocacaoTest extends TracApplicationTest {
 				.param("valor", Double.valueOf(255).toString())
 				).andExpect(status().isOk());			
 	}
-
+	
 	@Test
 	public void testSalvar() throws Exception {
 		String modelo = criaCarro().getModelo().getId().toString();
