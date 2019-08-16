@@ -1,12 +1,28 @@
 package br.com.targettrust.traccadastros.entidades;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import javax.persistence.*;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 import java.util.Set;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.PastOrPresent;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import br.com.targettrust.traccadastros.config.LocalDateDeserealizer;
+import br.com.targettrust.traccadastros.config.LocalDateSerializer;
+
 
 @Entity
 @Table(name = "tb_reserva")
@@ -20,6 +36,8 @@ public class Reserva extends Entidade {
     @JoinColumn(name = "id_veiculo")
     private Veiculo veiculo;
 
+    @JsonDeserialize(using = LocalDateDeserealizer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     @Column(name = "dt_inicial")
     @Future
     @JsonFormat(
@@ -28,6 +46,8 @@ public class Reserva extends Entidade {
             timezone = "BRT")
     private LocalDate dataInicial;
 
+    @JsonDeserialize(using = LocalDateDeserealizer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     @Column(name = "dt_final")
     @Future
     @JsonFormat(
@@ -36,6 +56,8 @@ public class Reserva extends Entidade {
             timezone = "BRT")
     private LocalDate dataFinal;
 
+    @JsonDeserialize(using = LocalDateDeserealizer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     @Column(name = "dt_cancelamento")
     @PastOrPresent
     @JsonFormat(

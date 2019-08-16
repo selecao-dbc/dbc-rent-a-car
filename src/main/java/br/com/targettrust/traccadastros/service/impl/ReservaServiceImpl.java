@@ -46,6 +46,7 @@ public class ReservaServiceImpl implements ReservaService{
 		throw new NotFoundRuntimeException("Nenhuma reserva encontrada para id = "+id);
 	}
 
+	@Transactional
 	@Override
 	public Reserva salvar(Long modelo, LocalDate dataInicial, LocalDate dataFinal) {
 		Veiculo veiculo = getVeiculoDisponivel(modelo, dataInicial, dataFinal); 

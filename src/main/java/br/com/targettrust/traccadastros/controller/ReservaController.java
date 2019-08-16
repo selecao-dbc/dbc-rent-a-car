@@ -1,11 +1,13 @@
 package br.com.targettrust.traccadastros.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,8 +33,8 @@ public class ReservaController {
 	
 	@PostMapping
 	public Reserva criar(@RequestParam(required = true) Long modelo,
-			@RequestParam(required = true) @DateTimeFormat LocalDate dataInicial,
-			@RequestParam(required = true) @DateTimeFormat LocalDate dataFinal) {
+			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataInicial,
+			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataFinal) {
 
 		return reservaService.salvar(modelo, dataInicial, dataFinal);
 	}
@@ -56,6 +58,12 @@ public class ReservaController {
 	@GetMapping(value = "/{id}")
 	public HttpEntity<Reserva> getByID(@PathParam("id") Long param) {
 		return null;
+	}
+
+	
+	@GetMapping	
+	public ResponseEntity<List<Reserva>> findAll() {
+		return ResponseEntity.ok(reservaService.findAll());
 	}
 
 
