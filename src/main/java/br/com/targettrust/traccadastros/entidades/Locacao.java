@@ -7,6 +7,12 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import br.com.targettrust.traccadastros.config.LocalDateDeserealizer;
+import br.com.targettrust.traccadastros.config.LocalDateSerializer;
+
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -23,11 +29,15 @@ public class Locacao extends Entidade{
 	@NotNull
 	private Veiculo veiculo;
 	
+	@JsonDeserialize(using = LocalDateDeserealizer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
 	@Column(name="dt_inicio")
 	@FutureOrPresent
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
 	private LocalDate dataInicial;
 	
+	@JsonDeserialize(using = LocalDateDeserealizer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
 	@Column(name="dt_fim")
 	@Future
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
