@@ -40,7 +40,7 @@ public class ReservaController {
 	}
 	
 	
-	@PutMapping(value = "alterar/{id}")
+	@PutMapping(value = "/{id}")
 	public HttpEntity<Reserva> alterar(
 			@PathVariable Long id, 
 			@RequestParam(required = true) Long modelo,
