@@ -78,8 +78,6 @@ public class ReservaServiceImpl implements ReservaService {
 	public Reserva alterar(Long id, Long modelo, LocalDate dataInicial, LocalDate dataFinal) {
 		Reserva reserva = reservaRepository.findById(id)
 				.orElseThrow(() -> new NotFoundRuntimeException("Nenhuma reserva encontrada para id = " + id));
-		Veiculo veiculo = getVeiculoDisponivel(modelo, dataInicial, dataFinal);
-		reserva.setVeiculo(veiculo);
 		reserva.setDataFinal(dataFinal);
 		reserva.setDataInicial(dataInicial);
 		reserva.setVersion(reserva.getVersion() + 1l);

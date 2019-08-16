@@ -1,6 +1,5 @@
 package br.com.targettrust.traccadastros.test;
 
-import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -53,18 +52,6 @@ public class ReservaTest extends TracApplicationTest{
 				.param("dataFinal", DATA_FINAL.plusDays(1).toString())
 				.param("modelo", carro.getModelo().getId().toString())
 				).andExpect(status().isOk());
-	}
-	
-	@Test
-	public void testeAlterarReservaBadRequest() throws Exception {		
-		Carro carro = criaCarro();
-		Reserva reserva = reservaService.salvar(carro.getModelo().getId(), LocalDate.of(2018, 01, 01),LocalDate.of(2018, 01, 10));
-		mvc.perform(put("/reservas/".concat(reserva.getId().toString()))
-				.contentType("application/json")
-				.param("dataInicial", LocalDate.of(2018, 01, 01).toString())
-				.param("dataFinal", LocalDate.of(2018, 01, 15).toString())
-				.param("modelo", carro.getModelo().getId().toString())
-				).andExpect(status().isBadRequest());
 	}
 	
 	@Test
