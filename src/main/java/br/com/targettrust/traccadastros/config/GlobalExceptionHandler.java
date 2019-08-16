@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
 	
 	
 	@Autowired
-	private transient Logger logger;
+	private Logger logger;
 	
 	@ExceptionHandler({NotFoundRuntimeException.class})
 	public ResponseEntity handlerException(Throwable ex) {

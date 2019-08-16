@@ -23,8 +23,6 @@ import br.com.targettrust.traccadastros.service.ReservaService;
 @RequestMapping("reservas")
 public class ReservaController {
 
-	// TODO 1 Implementar métodos para criação, alteração e cancelamento de reserva
-
 	@Autowired
 	private ReservaService reservaService;
 	
@@ -57,7 +55,6 @@ public class ReservaController {
 		return ResponseEntity.ok(reservaService.findbyId(id));
 	}
 
-	
 	@GetMapping	
 	public ResponseEntity<List<Reserva>> findAll() {
 		return ResponseEntity.ok(reservaService.findAll());

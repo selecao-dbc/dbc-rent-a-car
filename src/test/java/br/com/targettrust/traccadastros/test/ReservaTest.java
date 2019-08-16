@@ -8,15 +8,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDate;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.targettrust.traccadastros.entidades.Carro;
 import br.com.targettrust.traccadastros.entidades.Reserva;
+import br.com.targettrust.traccadastros.service.ReservaService;
 
 public class ReservaTest extends TracApplicationTest{
 
 	private static final LocalDate DATA_INICIAL = LocalDate.now().plusDays(1);
 	private static final LocalDate DATA_FINAL = LocalDate.now().plusDays(15);
 	
+	@Autowired
+	private ReservaService reservaService;
 
 	@Test
 	public void salvarReserva() throws Exception {		

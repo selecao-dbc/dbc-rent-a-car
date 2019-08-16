@@ -50,9 +50,6 @@ public abstract class TracApplicationTest {
 	protected MockMvc mvc;
 
 	@Autowired
-	protected ReservaService reservaService;
-
-	@Autowired
 	protected VeiculoRepository veiculoRepository;
 
 	@Autowired
