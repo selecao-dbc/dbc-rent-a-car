@@ -41,23 +41,23 @@ public class ReservaController {
 	
 	
 	@PutMapping(value = "/{id}")
-	public HttpEntity<Reserva> alterar(
-			@PathVariable Long id, 
+	public ResponseEntity<Reserva> alterar(
+			@PathVariable("id") Long id, 
 			@RequestParam(required = true) Long modelo,
-			@RequestParam(required = true) @DateTimeFormat LocalDate dataInicial,
-			@RequestParam(required = true) @DateTimeFormat LocalDate dataFinal) {
-		
+			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataInicial,
+			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataFinal) {
 		return ResponseEntity.ok(reservaService.alterar(id,modelo,dataInicial,dataFinal));
 	}
+	
 	@PutMapping(value = "cancelar/{id}")
-	public HttpEntity cancelar(@PathVariable Long id) {	
+	public ResponseEntity<Reserva> cancelar(@PathVariable Long id) {	
 		return 	ResponseEntity.ok(reservaService.cancelar(id));
 	}
 
 	
 	@GetMapping(value = "/{id}")
-	public HttpEntity<Reserva> getByID(@PathParam("id") Long param) {
-		return null;
+	public HttpEntity<Reserva> getByID(@PathVariable("id") Long id) {
+		return ResponseEntity.ok(reservaService.findbyId(id));
 	}
 
 	

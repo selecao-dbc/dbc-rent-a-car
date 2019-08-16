@@ -15,8 +15,8 @@ import br.com.targettrust.traccadastros.entidades.Reserva;
 
 public class ReservaTest extends TracApplicationTest{
 
-	private static final LocalDate DATA_INICIAL = LocalDate.of(2018, 01, 01);
-	private static final LocalDate DATA_FINAL = LocalDate.of(2018, 01, 15);
+	private static final LocalDate DATA_INICIAL = LocalDate.now().plusDays(1);
+	private static final LocalDate DATA_FINAL = LocalDate.now().plusDays(15);
 	
 
 	@Test
@@ -44,23 +44,34 @@ public class ReservaTest extends TracApplicationTest{
 	}
 
 	@Test
-	public void testeAlterarReserva() throws Exception {
-		
+	public void testeAlterarReserva() throws Exception {		
 		Carro carro = criaCarro();
 		Reserva reserva = reservaService.salvar(carro.getModelo().getId(), DATA_INICIAL, DATA_FINAL);
-		mvc.perform(put("/reserva/"+reserva.getId())
+		mvc.perform(put("/reservas/".concat(reserva.getId().toString()))
 				.contentType("application/json")
-				.param("dataInicial", DATA_INICIAL.plusDays(1).toString())
+				.param("dataInicial", DATA_INICIAL.plusDays(2).toString())
 				.param("dataFinal", DATA_FINAL.plusDays(1).toString())
 				.param("modelo", carro.getModelo().getId().toString())
 				).andExpect(status().isOk());
 	}
 	
 	@Test
+	public void testeAlterarReservaBadRequest() throws Exception {		
+		Carro carro = criaCarro();
+		Reserva reserva = reservaService.salvar(carro.getModelo().getId(), LocalDate.of(2018, 01, 01),LocalDate.of(2018, 01, 10));
+		mvc.perform(put("/reservas/".concat(reserva.getId().toString()))
+				.contentType("application/json")
+				.param("dataInicial", LocalDate.of(2018, 01, 01).toString())
+				.param("dataFinal", LocalDate.of(2018, 01, 15).toString())
+				.param("modelo", carro.getModelo().getId().toString())
+				).andExpect(status().isBadRequest());
+	}
+	
+	@Test
 	public void testGetById() throws Exception {
 		Carro carro = criaCarro();
 		Reserva reserva = reservaService.salvar(carro.getModelo().getId(), DATA_INICIAL, DATA_FINAL);
-		mvc.perform(get("/reservas/"+reserva.getId())).andExpect(status().isOk());
+		mvc.perform(get("/reservas/".concat(reserva.getId().toString()))).andExpect(status().isOk());
 	}
 	
 	@Test

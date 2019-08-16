@@ -68,6 +68,7 @@ public abstract class TracApplicationTest {
 	public void after() {
 		veiculoRepository.deleteAll();
 		modeloRepository.deleteAll();
+		marcaRepository.deleteAll();
 	}
 	
 	protected Marca criaMarca() {
