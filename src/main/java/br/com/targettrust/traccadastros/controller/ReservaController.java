@@ -8,21 +8,20 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.targettrust.traccadastros.entidades.Equipamento;
+import br.com.targettrust.traccadastros.entidades.Modelo;
 import br.com.targettrust.traccadastros.entidades.Reserva;
+import br.com.targettrust.traccadastros.entidades.Veiculo;
+import br.com.targettrust.traccadastros.repositorio.LocacaoRepository;
+import br.com.targettrust.traccadastros.repositorio.ModeloRepository;
 import br.com.targettrust.traccadastros.repositorio.ReservaRepository;
 import br.com.targettrust.traccadastros.repositorio.VeiculoRepository;
 
@@ -34,16 +33,26 @@ public class ReservaController {
 
 	@Autowired
 	private ReservaRepository reservaRepository;
+	@Autowired
+	private LocacaoRepository locacaoRepository;
+	@Autowired
+	private ModeloRepository modeloRepository;
+	@Autowired
+	private VeiculoRepository veiculoRepository;
+
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public HttpEntity<Reserva> createReserva(@Valid @RequestBody Reserva reserva){
 		
-		List<Reserva> dbReserva = reservaRepository.findByPlacaVeiculo(reserva.getVeiculo().getPlaca(), reserva.getDataInicial(), reserva.getDataFinal());
 		
-		if(reserva == null || reserva.getId() != null || !dbReserva.isEmpty()) {
+		Veiculo veiculo = this.verificarDisponibilidadeModelo(reserva.getVeiculo().getModelo().getNome(), reserva.getDataInicial(),  reserva.getDataFinal());
+
+		if(reserva == null || reserva.getId() != null || veiculo==null) {
 			return ResponseEntity.badRequest().build();
 		}
 
+		reserva.setVeiculo(veiculo);
+		
 		return ResponseEntity.ok(reservaRepository.save(reserva));	
 	}
 	
@@ -51,11 +60,16 @@ public class ReservaController {
 	public HttpEntity<Reserva> updateReserva(@PathVariable("id") Long id, 
 			@Valid @RequestBody Reserva reserva) {
 		Optional<Reserva> dbReserva = reservaRepository.findById(id);
-		if(dbReserva.isPresent()) {
+		Veiculo veiculo = this.verificarDisponibilidadeModelo(reserva.getVeiculo().getModelo().getNome(), reserva.getDataInicial(),  reserva.getDataFinal());
+
+		if(dbReserva.isPresent()&&veiculo!=null) {
+			
+			
+			
 			dbReserva.get().setDataInicial(reserva.getDataInicial());
 			dbReserva.get().setDataFinal(reserva.getDataFinal());
 			dbReserva.get().setEquipamentos(reserva.getEquipamentos());	
-			dbReserva.get().setVeiculo(reserva.getVeiculo());
+			dbReserva.get().setVeiculo(veiculo);
 			dbReserva.get().setVersion(reserva.getVersion());
 			reservaRepository.save(dbReserva.get());
 			return ResponseEntity.ok().build();
@@ -74,6 +88,24 @@ public class ReservaController {
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.notFound().build();		
-	} 
+	}
+	
+
+	public Veiculo verificarDisponibilidadeModelo(String modelo, LocalDate dataInicial, LocalDate dataFinal) {
+		
+		Veiculo retorno = null;
+
+		Modelo mod = modeloRepository.findByNome(modelo);
+
+		List<Veiculo> veiculos = veiculoRepository.findByModelo(mod);
+		
+		for(Veiculo veiculo : veiculos){
+		   if(reservaRepository.findByIdVeiculo(veiculo.getId(), dataInicial, dataFinal).isEmpty()&&locacaoRepository.findByIdVeiculo(veiculo.getId(), dataInicial, dataFinal).isEmpty()) {
+			   return veiculo;
+		   }
+		}
+		 
+		return retorno;		
+	}
 	
 }
