@@ -7,6 +7,8 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.targettrust.traccadastros.entidades.Locacao;
@@ -42,16 +45,23 @@ public class LocacaoController {
 
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public HttpEntity<Locacao> createLocacao(@Valid @RequestBody Locacao locacao){
+	public HttpEntity<Locacao> createLocacao(@RequestParam(required = true) String modelo,
+			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataInicial,
+			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataFinal){
 		
 		
-		Veiculo veiculo = this.verificarDisponibilidadeModelo(locacao.getVeiculo().getModelo().getNome(), locacao.getDataInicial(),  locacao.getDataFinal());
+		Veiculo veiculo = this.verificarDisponibilidadeModelo(modelo, dataInicial,  dataFinal);
 
-		if(locacao == null || locacao.getId() != null || veiculo==null) {
+		if(veiculo==null) {
 			return ResponseEntity.badRequest().build();
 		}
+		
+		Locacao locacao = new Locacao();
 
+		locacao.setDataInicial(dataInicial);
+		locacao.setDataFinal(dataFinal);
 		locacao.setVeiculo(veiculo);
+		
 		
 		return ResponseEntity.ok(locacaoRepository.save(locacao));	
 	}
@@ -63,13 +73,12 @@ public class LocacaoController {
 		Veiculo veiculo = this.verificarDisponibilidadeModelo(locacao.getVeiculo().getModelo().getNome(), locacao.getDataInicial(),  locacao.getDataFinal());
 
 		if(dbLocacao.isPresent()&&veiculo!=null) {
-			
-			
-			
+		
 			dbLocacao.get().setDataInicial(locacao.getDataInicial());
 			dbLocacao.get().setDataFinal(locacao.getDataFinal());
 			dbLocacao.get().setVeiculo(veiculo);
 			dbLocacao.get().setVersion(locacao.getVersion());
+			dbLocacao.get().setValor(locacao.getValor());
 			locacaoRepository.save(dbLocacao.get());
 			return ResponseEntity.ok().build();
 		}
