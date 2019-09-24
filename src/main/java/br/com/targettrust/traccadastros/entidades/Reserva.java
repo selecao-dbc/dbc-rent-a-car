@@ -24,7 +24,7 @@ public class Reserva extends Entidade {
     @Future
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
-            pattern = "dd.MM.yyyy HH:mm:ss",
+            pattern = "dd.MM.yyyy",
             timezone = "BRT")
     private LocalDate dataInicial;
 
@@ -32,7 +32,7 @@ public class Reserva extends Entidade {
     @Future
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
-            pattern = "dd.MM.yyyy HH:mm:ss",
+            pattern = "dd.MM.yyyy",
             timezone = "BRT")
     private LocalDate dataFinal;
 
@@ -40,7 +40,7 @@ public class Reserva extends Entidade {
     @PastOrPresent
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
-            pattern = "dd.MM.yyyy HH:mm:ss",
+            pattern = "dd.MM.yyyy",
             timezone = "BRT")
     private LocalDate dataCancelamento;
 

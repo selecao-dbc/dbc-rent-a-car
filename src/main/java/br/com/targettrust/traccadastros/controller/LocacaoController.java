@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.targettrust.traccadastros.entidades.Locacao;
 import br.com.targettrust.traccadastros.entidades.Modelo;
 import br.com.targettrust.traccadastros.entidades.Reserva;
 import br.com.targettrust.traccadastros.entidades.Veiculo;
@@ -30,10 +31,8 @@ import br.com.targettrust.traccadastros.repositorio.ReservaRepository;
 import br.com.targettrust.traccadastros.repositorio.VeiculoRepository;
 
 @RestController
-@RequestMapping("reservas")
-public class ReservaController {
-
-	// TODO 1 Implementar métodos para criação, alteração e cancelamento de reserva
+@RequestMapping("locacoes")
+public class LocacaoController {
 
 	@Autowired
 	private ReservaRepository reservaRepository;
@@ -46,7 +45,7 @@ public class ReservaController {
 
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public HttpEntity<Reserva> createReserva(@RequestParam(required = true) String modelo,
+	public HttpEntity<Locacao> createLocacao(@RequestParam(required = true) String modelo,
 			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataInicial,
 			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataFinal){
 		
@@ -57,55 +56,44 @@ public class ReservaController {
 			return ResponseEntity.badRequest().build();
 		}
 		
-		Reserva reserva = new Reserva();
-		reserva.setVeiculo(veiculo);
-		reserva.setDataInicial(dataInicial);
-		reserva.setDataFinal(dataFinal);
+		Locacao locacao = new Locacao();
+
+		locacao.setDataInicial(dataInicial);
+		locacao.setDataFinal(dataFinal);
+		locacao.setVeiculo(veiculo);
 		
-		return ResponseEntity.ok(reservaRepository.save(reserva));	
+		
+		return ResponseEntity.ok(locacaoRepository.save(locacao));	
 	}
 	
 	@PutMapping(value="/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public HttpEntity<Reserva> updateReserva(@PathVariable("id") Long id, 
-			@RequestParam(required = true) String modelo,
+	public HttpEntity<Locacao> updateLocacao(@PathVariable("id") Long id, @RequestParam(required = true) String modelo,
 			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataInicial,
 			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataFinal){
 		
-	 
-		Optional<Reserva> dbReserva = reservaRepository.findById(id);
+		
+		Optional<Locacao> dbLocacao = locacaoRepository.findById(id);
 		Veiculo veiculo = this.verificarDisponibilidadeModelo(modelo, dataInicial,  dataFinal);
 
-		if(dbReserva.isPresent()&&veiculo!=null) {
+		if(dbLocacao.isPresent()&&veiculo!=null) {
 		
-			dbReserva.get().setDataInicial(dataInicial);
-			dbReserva.get().setDataFinal(dataFinal);
-			dbReserva.get().setVeiculo(veiculo);
-			dbReserva.get().setVersion(dbReserva.get().getVersion()+1);
-			
-			reservaRepository.save(dbReserva.get());
-			
-			return ResponseEntity.ok(dbReserva.get());
+			dbLocacao.get().setDataInicial(dataInicial);
+			dbLocacao.get().setDataFinal(dataFinal);
+			dbLocacao.get().setVeiculo(veiculo);
+			dbLocacao.get().setVersion(dbLocacao.get().getVersion()+1);
+
+			locacaoRepository.save(dbLocacao.get());
+			return ResponseEntity.ok(dbLocacao.get());
 		}
 		return ResponseEntity.notFound().build();		
 	} 
 	
 	
-	@PutMapping(value="/{id}/cancel", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public HttpEntity<Reserva> cancelReserva(@PathVariable("id") Long id) {
-		Optional<Reserva> dbReserva = reservaRepository.findById(id);
-		if(dbReserva.isPresent()) {
-			LocalDate dataAtual = LocalDate.now();
-			dbReserva.get().setDataCancelamento(dataAtual);
-			reservaRepository.save(dbReserva.get());
-			return ResponseEntity.ok().build();
-		}
-		return ResponseEntity.notFound().build();		
-	}
-	
 	@DeleteMapping("/{id}")
 	public void deleteById(@PathVariable("id") Long id) {
 		locacaoRepository.deleteById(id);
 	}
+	
 
 	private Veiculo verificarDisponibilidadeModelo(String modelo, LocalDate dataInicial, LocalDate dataFinal) {
 		
