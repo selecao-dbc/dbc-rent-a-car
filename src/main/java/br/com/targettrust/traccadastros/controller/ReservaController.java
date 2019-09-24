@@ -67,21 +67,24 @@ public class ReservaController {
 	
 	@PutMapping(value="/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public HttpEntity<Reserva> updateReserva(@PathVariable("id") Long id, 
-			@Valid @RequestBody Reserva reserva) {
+			@RequestParam(required = true) String modelo,
+			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataInicial,
+			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataFinal){
+		
+	 
 		Optional<Reserva> dbReserva = reservaRepository.findById(id);
-		Veiculo veiculo = this.verificarDisponibilidadeModelo(reserva.getVeiculo().getModelo().getNome(), reserva.getDataInicial(),  reserva.getDataFinal());
+		Veiculo veiculo = this.verificarDisponibilidadeModelo(modelo, dataInicial,  dataFinal);
 
 		if(dbReserva.isPresent()&&veiculo!=null) {
-			
-			
-			
-			dbReserva.get().setDataInicial(reserva.getDataInicial());
-			dbReserva.get().setDataFinal(reserva.getDataFinal());
-			dbReserva.get().setEquipamentos(reserva.getEquipamentos());	
+		
+			dbReserva.get().setDataInicial(dataInicial);
+			dbReserva.get().setDataFinal(dataFinal);
 			dbReserva.get().setVeiculo(veiculo);
-			dbReserva.get().setVersion(reserva.getVersion());
+			dbReserva.get().setVersion(dbReserva.get().getVersion()+1);
+			
 			reservaRepository.save(dbReserva.get());
-			return ResponseEntity.ok().build();
+			
+			return ResponseEntity.ok(dbReserva.get());
 		}
 		return ResponseEntity.notFound().build();		
 	} 

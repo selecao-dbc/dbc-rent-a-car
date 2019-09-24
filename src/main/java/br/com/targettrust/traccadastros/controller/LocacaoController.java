@@ -67,20 +67,23 @@ public class LocacaoController {
 	}
 	
 	@PutMapping(value="/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public HttpEntity<Locacao> updateLocacao(@PathVariable("id") Long id, 
-			@Valid @RequestBody Locacao locacao) {
+	public HttpEntity<Locacao> updateLocacao(@PathVariable("id") Long id, @RequestParam(required = true) String modelo,
+			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataInicial,
+			@RequestParam(required = true) @DateTimeFormat(iso = ISO.DATE) LocalDate dataFinal){
+		
+		
 		Optional<Locacao> dbLocacao = locacaoRepository.findById(id);
-		Veiculo veiculo = this.verificarDisponibilidadeModelo(locacao.getVeiculo().getModelo().getNome(), locacao.getDataInicial(),  locacao.getDataFinal());
+		Veiculo veiculo = this.verificarDisponibilidadeModelo(modelo, dataInicial,  dataFinal);
 
 		if(dbLocacao.isPresent()&&veiculo!=null) {
 		
-			dbLocacao.get().setDataInicial(locacao.getDataInicial());
-			dbLocacao.get().setDataFinal(locacao.getDataFinal());
+			dbLocacao.get().setDataInicial(dataInicial);
+			dbLocacao.get().setDataFinal(dataFinal);
 			dbLocacao.get().setVeiculo(veiculo);
-			dbLocacao.get().setVersion(locacao.getVersion());
-			dbLocacao.get().setValor(locacao.getValor());
+			dbLocacao.get().setVersion(dbLocacao.get().getVersion()+1);
+
 			locacaoRepository.save(dbLocacao.get());
-			return ResponseEntity.ok().build();
+			return ResponseEntity.ok(dbLocacao.get());
 		}
 		return ResponseEntity.notFound().build();		
 	} 
