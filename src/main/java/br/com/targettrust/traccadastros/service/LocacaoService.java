@@ -27,7 +27,7 @@ public class LocacaoService {
 
         if (locacao != null) {
             Optional<Veiculo> veiculoOptional = veiculoService.findAvailabilityByModelo(id, null,
-                    locacaoDTO.getModelo(), locacaoDTO.getDataInicial(), locacaoDTO.getDataFinal());
+                    locacaoDTO);
             if (veiculoOptional.isPresent()) {
                 Veiculo veiculo = veiculoOptional.get();
 
