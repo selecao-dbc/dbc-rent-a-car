@@ -2,6 +2,7 @@ package br.com.targettrust.traccadastros.service;
 
 import br.com.targettrust.traccadastros.entidades.Carro;
 import br.com.targettrust.traccadastros.entidades.Locacao;
+import br.com.targettrust.traccadastros.entidades.dto.LocacaoDTO;
 import br.com.targettrust.traccadastros.entidades.dto.LocacaoOuReservaDTO;
 import br.com.targettrust.traccadastros.repositorio.LocacaoRepository;
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class LocacaoServiceTest {
     @Test
     public void testSaveWithoutIdWithVeiculoFound() {
         Locacao locacaoInit = new Locacao();
-        LocacaoOuReservaDTO locacaoDTO = new LocacaoOuReservaDTO();
+        LocacaoDTO locacaoDTO = new LocacaoDTO();
 
         when(veiculoService.findAvailabilityByModelo(null, null, locacaoDTO))
                 .thenReturn(Optional.of(new Carro()));
@@ -51,7 +52,7 @@ public class LocacaoServiceTest {
 
     @Test
     public void testSaveWithoutIdWithVeiculoNotFound() {
-        LocacaoOuReservaDTO locacaoDTO = new LocacaoOuReservaDTO();
+        LocacaoDTO locacaoDTO = new LocacaoDTO();
 
         when(veiculoService.findAvailabilityByModelo(null, null, locacaoDTO))
                 .thenReturn(Optional.empty());
@@ -66,7 +67,7 @@ public class LocacaoServiceTest {
     @Test
     public void testSaveWithIdFound() {
         Locacao locacaoInit = new Locacao();
-        LocacaoOuReservaDTO locacaoDTO = new LocacaoOuReservaDTO();
+        LocacaoDTO locacaoDTO = new LocacaoDTO();
 
         when(locacaoRepository.findById(1L)).thenReturn(Optional.of(locacaoInit));
         when(veiculoService.findAvailabilityByModelo(1L, null, locacaoDTO))
@@ -86,7 +87,7 @@ public class LocacaoServiceTest {
     public void testSaveWithIdNotFound() {
         when(locacaoRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Locacao locacao = locacaoService.save(1L, new LocacaoOuReservaDTO());
+        Locacao locacao = locacaoService.save(1L, new LocacaoDTO());
 
         assertNull(locacao);
         verify(locacaoRepository, times(1)).findById(1L);

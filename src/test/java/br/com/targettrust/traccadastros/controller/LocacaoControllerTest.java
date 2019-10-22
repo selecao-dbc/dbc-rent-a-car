@@ -4,6 +4,7 @@ import br.com.targettrust.traccadastros.TracCadastrosApplication;
 import br.com.targettrust.traccadastros.entidades.Carro;
 import br.com.targettrust.traccadastros.entidades.Locacao;
 import br.com.targettrust.traccadastros.entidades.Modelo;
+import br.com.targettrust.traccadastros.entidades.dto.LocacaoDTO;
 import br.com.targettrust.traccadastros.entidades.dto.LocacaoOuReservaDTO;
 import br.com.targettrust.traccadastros.service.LocacaoService;
 import br.com.targettrust.traccadastros.util.TestUtils;
@@ -53,14 +54,15 @@ public class LocacaoControllerTest {
 
     @Test
     public void testCreateStatusOk() throws Exception {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO("Prisma",
-                LocalDate.of(2020, 6, 12), LocalDate.of(2020, 6, 15));
-        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+        LocacaoDTO locacaoDTO = mockLocacaoDTO("Prisma",
+                LocalDate.of(2020, 6, 12),
+                LocalDate.of(2020, 6, 15), 12D);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoDTO);
 
         Locacao locacao = mockLocacaoDTO();
-        String jsonLocacao = TestUtils.convertLocacaoOuReservaDTOToJson(locacao);
+        String jsonLocacao = TestUtils.convertObjectToJson(locacao);
 
-        when(locacaoServiceMock.save(eq(null), any(LocacaoOuReservaDTO.class))).thenReturn(locacao);
+        when(locacaoServiceMock.save(eq(null), any(LocacaoDTO.class))).thenReturn(locacao);
 
         this.mockMvc.perform(post("/locacoes")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -73,9 +75,10 @@ public class LocacaoControllerTest {
 
     @Test
     public void testCreateDTONotValidWithoutModelo() throws Exception {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO(null,
-                LocalDate.of(2020, 6, 12), LocalDate.of(2020, 6, 15));
-        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+        LocacaoDTO locacaoDTO = mockLocacaoDTO(null,
+                LocalDate.of(2020, 6, 12),
+                LocalDate.of(2020, 6, 15), 12D);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoDTO);
 
         this.mockMvc.perform(post("/locacoes")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -88,9 +91,9 @@ public class LocacaoControllerTest {
 
     @Test
     public void testCreateDTONotValidWithoutDataInicial() throws Exception {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO("Prisma",
-                null, LocalDate.of(2020, 6, 15));
-        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+        LocacaoDTO locacaoDTO = mockLocacaoDTO("Prisma",
+                null, LocalDate.of(2020, 6, 15), 12D);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoDTO);
 
         this.mockMvc.perform(post("/locacoes")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -103,9 +106,9 @@ public class LocacaoControllerTest {
 
     @Test
     public void testCreateDTONotValidWithoutDataFinal() throws Exception {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO("Prisma",
-                LocalDate.of(2020, 6, 12), null);
-        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+        LocacaoDTO locacaoDTO = mockLocacaoDTO("Prisma",
+                LocalDate.of(2020, 6, 12), null, 12D);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoDTO);
 
         this.mockMvc.perform(post("/locacoes")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -118,9 +121,9 @@ public class LocacaoControllerTest {
 
     @Test
     public void testCreateDTONotValidMoreOneErrors() throws Exception {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO(null,
-                null, null);
-        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+        LocacaoDTO locacaoDTO = mockLocacaoDTO(null,
+                null, null, null);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoDTO);
 
         this.mockMvc.perform(post("/locacoes")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -131,16 +134,18 @@ public class LocacaoControllerTest {
                 .andExpect(content().json(
                         "[\"'dataFinal' não pode ser nulo.\"," +
                                 "\"'dataInicial' não pode ser nulo.\"," +
-                                "\"'modelo' não pode ser vázio.\"]"));
+                                "\"'modelo' não pode ser vázio.\"," +
+                                "\"'valor' não pode ser nulo.\"]"));
     }
 
     @Test
     public void testCreateStatusNotFound() throws Exception {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO("Prisma",
-                LocalDate.of(2020, 6, 12), LocalDate.of(2020, 6, 15));
-        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+        LocacaoDTO locacaoDTO = mockLocacaoDTO("Prisma",
+                LocalDate.of(2020, 6, 12),
+                LocalDate.of(2020, 6, 15), 12D);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoDTO);
 
-        when(locacaoServiceMock.save(eq(null), any(LocacaoOuReservaDTO.class))).thenReturn(null);
+        when(locacaoServiceMock.save(eq(null), any(LocacaoDTO.class))).thenReturn(null);
 
         this.mockMvc.perform(post("/locacoes")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -152,14 +157,15 @@ public class LocacaoControllerTest {
 
     @Test
     public void testUpdateStatusOk() throws Exception {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO("Prisma",
-                LocalDate.of(2020, 6, 12), LocalDate.of(2020, 6, 15));
-        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+        LocacaoDTO locacaoDTO = mockLocacaoDTO("Prisma",
+                LocalDate.of(2020, 6, 12),
+                LocalDate.of(2020, 6, 15), 12D);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoDTO);
 
         Locacao locacao = mockLocacaoDTO();
-        String jsonLocacao = TestUtils.convertLocacaoOuReservaDTOToJson(locacao);
+        String jsonLocacao = TestUtils.convertObjectToJson(locacao);
 
-        when(locacaoServiceMock.save(eq(1L), any(LocacaoOuReservaDTO.class))).thenReturn(locacao);
+        when(locacaoServiceMock.save(eq(1L), any(LocacaoDTO.class))).thenReturn(locacao);
 
         this.mockMvc.perform(put("/locacoes/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -172,9 +178,10 @@ public class LocacaoControllerTest {
 
     @Test
     public void testUpdateDTONotValidWithoutModelo() throws Exception {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO(null,
-                LocalDate.of(2020, 6, 12), LocalDate.of(2020, 6, 15));
-        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+        LocacaoDTO locacaoDTO = mockLocacaoDTO(null,
+                LocalDate.of(2020, 6, 12),
+                LocalDate.of(2020, 6, 15), 12D);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoDTO);
 
         this.mockMvc.perform(put("/locacoes/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -187,9 +194,9 @@ public class LocacaoControllerTest {
 
     @Test
     public void testUpdateDTONotValidWithoutDataInicial() throws Exception {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO("Prisma",
-                null, LocalDate.of(2020, 6, 15));
-        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+        LocacaoDTO locacaoDTO = mockLocacaoDTO("Prisma",
+                null, LocalDate.of(2020, 6, 15), 12D);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoDTO);
 
         this.mockMvc.perform(put("/locacoes/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -202,9 +209,9 @@ public class LocacaoControllerTest {
 
     @Test
     public void testUpdateDTONotValidWithoutDataFinal() throws Exception {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO("Prisma",
-                LocalDate.of(2020, 6, 12), null);
-        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+        LocacaoDTO locacaoDTO = mockLocacaoDTO("Prisma",
+                LocalDate.of(2020, 6, 12), null, 12D);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoDTO);
 
         this.mockMvc.perform(put("/locacoes/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -217,9 +224,8 @@ public class LocacaoControllerTest {
 
     @Test
     public void testUpdateDTONotValidMoreOneErrors() throws Exception {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO(null,
-                null, null);
-        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+        LocacaoDTO locacaoDTO = mockLocacaoDTO(null, null, null, null);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoDTO);
 
         this.mockMvc.perform(put("/locacoes/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -230,16 +236,18 @@ public class LocacaoControllerTest {
                 .andExpect(content().json(
                         "[\"'dataFinal' não pode ser nulo.\"," +
                                 "\"'dataInicial' não pode ser nulo.\"," +
-                                "\"'modelo' não pode ser vázio.\"]"));
+                                "\"'modelo' não pode ser vázio.\"," +
+                                "\"'valor' não pode ser nulo.\"]"));
     }
 
     @Test
     public void testUpdateStatusNotFound() throws Exception {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO("Prisma",
-                LocalDate.of(2020, 6, 12), LocalDate.of(2020, 6, 15));
-        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+        LocacaoDTO locacaoDTO = mockLocacaoDTO("Prisma",
+                LocalDate.of(2020, 6, 12),
+                LocalDate.of(2020, 6, 15), 12D);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoDTO);
 
-        when(locacaoServiceMock.save(eq(1L), any(LocacaoOuReservaDTO.class))).thenReturn(null);
+        when(locacaoServiceMock.save(eq(1L), any(LocacaoDTO.class))).thenReturn(null);
 
         this.mockMvc.perform(put("/locacoes/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -273,6 +281,16 @@ public class LocacaoControllerTest {
         locacao.setVeiculo(carro);
 
         return locacao;
+    }
+
+    public LocacaoDTO mockLocacaoDTO(String modelo, LocalDate dataInicial, LocalDate dataFinal, Double valor) {
+        LocacaoDTO locacaoDTO = new LocacaoDTO();
+        locacaoDTO.setModelo(modelo);
+        locacaoDTO.setDataInicial(dataInicial);
+        locacaoDTO.setDataFinal(dataFinal);
+        locacaoDTO.setValor(valor);
+
+        return locacaoDTO;
     }
 
 }

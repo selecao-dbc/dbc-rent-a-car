@@ -1,7 +1,7 @@
 package br.com.targettrust.traccadastros.controller;
 
 import br.com.targettrust.traccadastros.entidades.Locacao;
-import br.com.targettrust.traccadastros.entidades.dto.LocacaoOuReservaDTO;
+import br.com.targettrust.traccadastros.entidades.dto.LocacaoDTO;
 import br.com.targettrust.traccadastros.service.LocacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -22,7 +22,7 @@ public class LocacaoController {
     private LocacaoService locacaoService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Locacao> create(@RequestBody @Valid @NotNull LocacaoOuReservaDTO locacaoDTO) {
+    public ResponseEntity<Locacao> create(@RequestBody @Valid @NotNull LocacaoDTO locacaoDTO) {
 
         Locacao locacao = locacaoService.save(null, locacaoDTO);
 
@@ -31,7 +31,7 @@ public class LocacaoController {
 
     @PutMapping(value="/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Locacao> update(@PathVariable("id") Long id,
-                                          @RequestBody @Valid @NotNull LocacaoOuReservaDTO locacaoDTO){
+                                          @RequestBody @Valid @NotNull LocacaoDTO locacaoDTO){
 
         Locacao locacao = locacaoService.save(id, locacaoDTO);
 

@@ -13,16 +13,7 @@ import java.time.format.DateTimeFormatter;
 
 public class TestUtils {
 
-    public static LocacaoOuReservaDTO mockLocacaoOuReservaDTO(String modelo, LocalDate dataInicial, LocalDate dataFinal) {
-        LocacaoOuReservaDTO locacaoOuReservaDTO = new LocacaoOuReservaDTO();
-        locacaoOuReservaDTO.setModelo(modelo);
-        locacaoOuReservaDTO.setDataInicial(dataInicial);
-        locacaoOuReservaDTO.setDataFinal(dataFinal);
-
-        return locacaoOuReservaDTO;
-    }
-
-    public static String convertLocacaoOuReservaDTOToJson(Object object) throws JsonProcessingException {
+    public static String convertObjectToJson(Object object) throws JsonProcessingException {
         JavaTimeModule module = new JavaTimeModule();
         LocalDateDeserializer localDateDeserializer =  new LocalDateDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         module.addDeserializer(LocalDate.class, localDateDeserializer);
