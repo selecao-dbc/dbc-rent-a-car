@@ -22,10 +22,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 
+import static org.mockito.Mockito.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -246,6 +247,14 @@ public class LocacaoControllerTest {
                 .content(jsonLocacaoOuReservaDTO))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteById() throws Exception {
+        this.mockMvc.perform(delete("/locacoes/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+
+        verify(locacaoServiceMock, times(1)).deleteById(1L);
     }
 
     private Locacao mockLocacaoDTO() {
