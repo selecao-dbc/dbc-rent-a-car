@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -243,6 +244,28 @@ public class ReservaControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(jsonLocacaoOuReservaDTO))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testCancelWithReservaFound() throws Exception {
+        when(reservaServiceMock.cancel(eq(1L))).thenReturn(Optional.of(new Reserva()));
+
+        this.mockMvc.perform(put("/reservas/1/cancel")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testCancelWithReservaNotFound() throws Exception {
+        when(reservaServiceMock.cancel(eq(1L))).thenReturn(Optional.empty());
+
+        this.mockMvc.perform(put("/reservas/1/cancel")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
