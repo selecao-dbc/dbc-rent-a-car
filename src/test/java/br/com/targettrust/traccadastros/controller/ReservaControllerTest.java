@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -128,8 +129,8 @@ public class ReservaControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json(
                         "[\"'dataFinal' não pode ser nulo.\"," +
-                                    "\"'dataInicial' não pode ser nulo.\"," +
-                                    "\"'modelo' não pode ser vázio.\"]"));
+                                "\"'dataInicial' não pode ser nulo.\"," +
+                                "\"'modelo' não pode ser vázio.\"]"));
     }
 
     @Test
@@ -141,6 +142,105 @@ public class ReservaControllerTest {
         when(reservaServiceMock.save(eq(null), any(LocacaoOuReservaDTO.class))).thenReturn(null);
 
         this.mockMvc.perform(post("/reservas")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(jsonLocacaoOuReservaDTO))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testUpdateStatusOk() throws Exception {
+        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO("Prisma",
+                LocalDate.of(2020, 6, 12), LocalDate.of(2020, 6, 15));
+        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+
+        Reserva reserva = mockReservaDTO();
+        String jsonLocacao = TestUtils.convertLocacaoOuReservaDTOToJson(reserva);
+
+        when(reservaServiceMock.save(eq(1L), any(LocacaoOuReservaDTO.class))).thenReturn(reserva);
+
+        this.mockMvc.perform(put("/reservas/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(jsonLocacaoOuReservaDTO))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonLocacao));
+    }
+
+    @Test
+    public void testUpdateDTONotValidWithoutModelo() throws Exception {
+        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO(null,
+                LocalDate.of(2020, 6, 12), LocalDate.of(2020, 6, 15));
+        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+
+        this.mockMvc.perform(put("/reservas/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(jsonLocacaoOuReservaDTO))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json("[\"'modelo' não pode ser vázio.\"]"));
+    }
+
+    @Test
+    public void testUpdateDTONotValidWithoutDataInicial() throws Exception {
+        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO("Prisma",
+                null, LocalDate.of(2020, 6, 15));
+        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+
+        this.mockMvc.perform(put("/reservas/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(jsonLocacaoOuReservaDTO))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json("[\"'dataInicial' não pode ser nulo.\"]"));
+    }
+
+    @Test
+    public void testUpdateDTONotValidWithoutDataFinal() throws Exception {
+        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO("Prisma",
+                LocalDate.of(2020, 6, 12), null);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+
+        this.mockMvc.perform(put("/reservas/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(jsonLocacaoOuReservaDTO))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json("[\"'dataFinal' não pode ser nulo.\"]"));
+    }
+
+    @Test
+    public void testUpdateDTONotValidMoreOneErrors() throws Exception {
+        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO(null,
+                null, null);
+        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+
+        this.mockMvc.perform(put("/reservas/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(jsonLocacaoOuReservaDTO))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(
+                        "[\"'dataFinal' não pode ser nulo.\"," +
+                                "\"'dataInicial' não pode ser nulo.\"," +
+                                "\"'modelo' não pode ser vázio.\"]"));
+    }
+
+    @Test
+    public void testUpdateStatusNotFound() throws Exception {
+        LocacaoOuReservaDTO locacaoOuReservaDTO = TestUtils.mockLocacaoOuReservaDTO("Prisma",
+                LocalDate.of(2020, 6, 12), LocalDate.of(2020, 6, 15));
+        String jsonLocacaoOuReservaDTO = TestUtils.convertLocacaoOuReservaDTOToJson(locacaoOuReservaDTO);
+
+        when(reservaServiceMock.save(eq(1L), any(LocacaoOuReservaDTO.class))).thenReturn(null);
+
+        this.mockMvc.perform(put("/reservas/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(jsonLocacaoOuReservaDTO))
