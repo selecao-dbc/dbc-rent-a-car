@@ -2,7 +2,6 @@ package br.com.targettrust.traccadastros.service;
 
 import br.com.targettrust.traccadastros.entidades.Carro;
 import br.com.targettrust.traccadastros.entidades.Locacao;
-import br.com.targettrust.traccadastros.entidades.Veiculo;
 import br.com.targettrust.traccadastros.entidades.dto.LocacaoOuReservaDTO;
 import br.com.targettrust.traccadastros.repositorio.LocacaoRepository;
 import org.junit.Test;
@@ -17,11 +16,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 
 @RunWith(MockitoJUnitRunner.class)
