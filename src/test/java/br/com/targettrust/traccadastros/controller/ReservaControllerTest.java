@@ -24,10 +24,9 @@ import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -246,6 +245,14 @@ public class ReservaControllerTest {
                 .content(jsonLocacaoOuReservaDTO))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteById() throws Exception {
+        this.mockMvc.perform(delete("/reservas/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+
+        verify(reservaServiceMock, times(1)).deleteById(1L);
     }
 
     private Reserva mockReservaDTO() {
