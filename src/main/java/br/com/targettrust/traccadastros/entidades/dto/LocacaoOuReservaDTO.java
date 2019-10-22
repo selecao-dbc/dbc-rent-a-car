@@ -1,13 +1,10 @@
 package br.com.targettrust.traccadastros.entidades.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-
-import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 
 public class LocacaoOuReservaDTO {
 
