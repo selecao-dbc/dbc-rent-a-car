@@ -43,11 +43,13 @@ public class ReservaService {
     }
 
     public Optional<Reserva> cancel(Long id) {
-        Optional<Reserva> dbReserva = findById(id);
-        if(dbReserva.isPresent()) {
-            dbReserva.get().setDataCancelamento(LocalDate.now());
+        Optional<Reserva> reservaOptional = findById(id);
+        if(reservaOptional.isPresent()) {
+            Reserva reserva = reservaOptional.get();
+            reserva.setDataCancelamento(LocalDate.now());
+            reservaOptional = Optional.of(reservaRepository.save(reserva));
         }
-        return dbReserva;
+        return reservaOptional;
     }
 
     public void deleteById(Long id) {

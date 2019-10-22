@@ -13,8 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -87,6 +86,32 @@ public class ReservaServiceTest {
         Reserva reserva = reservaService.save(1L, new LocacaoOuReservaDTO());
 
         assertNull(reserva);
+        verify(reservaRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    public void testCancelWithIdFound() {
+        Reserva reservaInit = new Reserva();
+
+        when(reservaRepository.findById(1L)).thenReturn(Optional.of(reservaInit));
+        when(reservaRepository.save(any())).thenReturn(reservaInit);
+
+        Optional<Reserva> reservaOptional = reservaService.cancel(1L);
+
+        assertTrue(reservaOptional.isPresent());
+        assertThat(reservaOptional.get(), is(reservaInit));
+        assertNotNull(reservaOptional.get().getDataCancelamento());
+        verify(reservaRepository, times(1)).findById(1L);
+        verify(reservaRepository, times(1)).save(any());
+    }
+
+    @Test
+    public void testCancelWithIdNotFound() {
+        when(reservaRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Optional<Reserva> reservaOptional = reservaService.cancel(1L);
+
+        assertFalse(reservaOptional.isPresent());
         verify(reservaRepository, times(1)).findById(1L);
     }
 
