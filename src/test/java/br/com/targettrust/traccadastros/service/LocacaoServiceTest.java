@@ -95,4 +95,11 @@ public class LocacaoServiceTest {
         assertNull(locacao);
         verify(locacaoRepository, times(1)).findById(1L);
     }
+
+    @Test
+    public void testDeleteById() {
+        locacaoService.deleteById(1L);
+
+        verify(locacaoRepository, times(1)).deleteById(1L);
+    }
 }
