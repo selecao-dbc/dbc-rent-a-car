@@ -23,14 +23,15 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = MOCK, classes = { TracCadastrosApplication.class })
@@ -81,8 +82,10 @@ public class ReservaControllerTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(jsonLocacaoOuReservaDTO))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().json("[\"'modelo' não pode ser vázio.\"]"));
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors", hasItem("'modelo' não pode ser vázio.")));
     }
 
     @Test
@@ -96,8 +99,10 @@ public class ReservaControllerTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(jsonLocacaoOuReservaDTO))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().json("[\"'dataInicial' não pode ser nulo.\"]"));
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors", hasItem("'dataInicial' não pode ser nulo.")));
     }
 
     @Test
@@ -111,8 +116,10 @@ public class ReservaControllerTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(jsonLocacaoOuReservaDTO))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().json("[\"'dataFinal' não pode ser nulo.\"]"));
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors", hasItem("'dataFinal' não pode ser nulo.")));
     }
 
     @Test
@@ -126,11 +133,31 @@ public class ReservaControllerTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(jsonLocacaoOuReservaDTO))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().json(
-                        "[\"'dataFinal' não pode ser nulo.\"," +
-                                "\"'dataInicial' não pode ser nulo.\"," +
-                                "\"'modelo' não pode ser vázio.\"]"));
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors", hasSize(3)))
+                .andExpect(jsonPath("$.errors", hasItem("'dataFinal' não pode ser nulo.")))
+                .andExpect(jsonPath("$.errors", hasItem("'dataInicial' não pode ser nulo.")))
+                .andExpect(jsonPath("$.errors", hasItem("'modelo' não pode ser vázio.")));
+    }
+
+    @Test
+    public void testCreateDTONotValidWithInvalidDatas() throws Exception {
+        LocacaoOuReservaDTO locacaoOuReservaDTO = mockLocacaoOuReservaDTO("Prisma",
+                LocalDate.of(2010, 6, 12),
+                LocalDate.of(2010, 6, 15));
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoOuReservaDTO);
+
+        this.mockMvc.perform(post("/reservas")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(jsonLocacaoOuReservaDTO))
+                .andDo(print())
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors", hasSize(2)))
+                .andExpect(jsonPath("$.errors", hasItem("'dataFinal' precisa ser uma data do futuro.")))
+                .andExpect(jsonPath("$.errors", hasItem("'dataInicial' precisa ser uma data atual ou do futuro.")));
     }
 
     @Test
@@ -180,8 +207,10 @@ public class ReservaControllerTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(jsonLocacaoOuReservaDTO))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().json("[\"'modelo' não pode ser vázio.\"]"));
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors", hasItem("'modelo' não pode ser vázio.")));
     }
 
     @Test
@@ -195,8 +224,10 @@ public class ReservaControllerTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(jsonLocacaoOuReservaDTO))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().json("[\"'dataInicial' não pode ser nulo.\"]"));
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors", hasItem("'dataInicial' não pode ser nulo.")));
     }
 
     @Test
@@ -210,8 +241,10 @@ public class ReservaControllerTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(jsonLocacaoOuReservaDTO))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().json("[\"'dataFinal' não pode ser nulo.\"]"));
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors", hasItem("'dataFinal' não pode ser nulo.")));
     }
 
     @Test
@@ -225,11 +258,31 @@ public class ReservaControllerTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(jsonLocacaoOuReservaDTO))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().json(
-                        "[\"'dataFinal' não pode ser nulo.\"," +
-                                "\"'dataInicial' não pode ser nulo.\"," +
-                                "\"'modelo' não pode ser vázio.\"]"));
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors", hasSize(3)))
+                .andExpect(jsonPath("$.errors", hasItem("'dataFinal' não pode ser nulo.")))
+                .andExpect(jsonPath("$.errors", hasItem("'dataInicial' não pode ser nulo.")))
+                .andExpect(jsonPath("$.errors", hasItem("'modelo' não pode ser vázio.")));
+    }
+
+    @Test
+    public void testUpdateDTONotValidWithInvalidDatas() throws Exception {
+        LocacaoOuReservaDTO locacaoOuReservaDTO = mockLocacaoOuReservaDTO("Prisma",
+                LocalDate.of(2010, 6, 12),
+                LocalDate.of(2010, 6, 15));
+        String jsonLocacaoOuReservaDTO = TestUtils.convertObjectToJson(locacaoOuReservaDTO);
+
+        this.mockMvc.perform(put("/reservas/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(jsonLocacaoOuReservaDTO))
+                .andDo(print())
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors", hasSize(2)))
+                .andExpect(jsonPath("$.errors", hasItem("'dataFinal' precisa ser uma data do futuro.")))
+                .andExpect(jsonPath("$.errors", hasItem("'dataInicial' precisa ser uma data atual ou do futuro.")));
     }
 
     @Test
