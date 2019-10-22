@@ -90,4 +90,10 @@ public class ReservaServiceTest {
         verify(reservaRepository, times(1)).findById(1L);
     }
 
+    @Test
+    public void testDeleteById() {
+        reservaService.deleteById(1L);
+
+        verify(reservaRepository, times(1)).deleteById(1L);
+    }
 }
