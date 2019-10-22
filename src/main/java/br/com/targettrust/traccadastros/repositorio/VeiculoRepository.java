@@ -17,13 +17,13 @@ public interface VeiculoRepository extends JpaRepository<Veiculo, Long>{
            "    SELECT veiculo.id FROM tb_veiculo veiculo " +
            "        INNER JOIN tb_modelo modelo ON modelo.id = veiculo.id_modelo " +
            "        LEFT JOIN tb_locacao locacao ON locacao.id_veiculo = veiculo.id " +
-           "            AND (:locacaoId IS NULL OR :locacaoId != locacao.id) " +
+           "            AND (:locacaoId IS NULL OR (CAST (CAST(:locacaoId AS character varying) AS bigint)) != locacao.id) " +
            "            AND (locacao.dt_inicio BETWEEN :dataInicial AND :dataFinal " +
            "                OR locacao.dt_fim BETWEEN :dataInicial AND :dataFinal " +
            "                OR :dataInicial BETWEEN locacao.dt_inicio AND locacao.dt_fim " +
            "                OR :dataFinal BETWEEN locacao.dt_inicio AND locacao.dt_fim) " +
            "        LEFT JOIN tb_reserva reserva ON reserva.id_veiculo = veiculo.id " +
-           "            AND (:reservaId IS NULL OR :reservaId != reserva.id) " +
+           "            AND (:reservaId IS NULL OR (CAST (CAST(:reservaId AS character varying) AS bigint)) != reserva.id) " +
            "            AND (reserva.dt_inicial BETWEEN :dataInicial AND :dataFinal " +
            "                OR reserva.dt_final BETWEEN :dataInicial AND :dataFinal " +
            "                OR :dataInicial BETWEEN reserva.dt_inicial AND reserva.dt_final " +
